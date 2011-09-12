@@ -8,7 +8,7 @@ Ruby >= 1.9.2 (At least for the named captures)
 
 ## Installation
 
-`gem install Scamp` or put `gem 'Scamp'` in your Gemfile.
+`gem install scamp` or put `gem 'scamp'` in your Gemfile.
 
 ## Usage and Examples
 
