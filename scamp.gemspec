@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "Scamp/version"
+require "scamp/version"
 
 Gem::Specification.new do |s|
-  s.name        = "Scamp"
+  s.name        = "scamp"
   s.version     = Scamp::VERSION
   s.authors     = ["Will Jessop"]
   s.email       = ["will@willj.net"]
