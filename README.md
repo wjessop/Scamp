@@ -14,11 +14,11 @@ Ruby >= 1.9.2 (At least for the named captures)
 
 Matchers are tested in order and all that satisfy the match and conditions will be run. Careful, Scamp listens to itself, you could easily create an infinite loop. Look in the examples dir for more.
 
-    require 'Scamp'
+    require 'scamp'
 
     scamp = Scamp.new(:api_key => "YOUR API KEY")
     
-    Scamp.behaviour do
+    scamp.behaviour do
       # 
       # Simple matching based on regex or string:
       # 
