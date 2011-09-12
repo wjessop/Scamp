@@ -94,7 +94,7 @@ In the channel/user conditions you can use the name, regex or ID of a user or ch
 
 ## Known issues
 
-* Bot doesn't detect that it's been kicked out of a channel and recommect
+* Bot doesn't detect that it's been kicked out of a channel and reconnect
 * Bot tends to crash when it encounters an error.
 
 ## How to contribute
