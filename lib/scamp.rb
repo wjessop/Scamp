@@ -20,6 +20,7 @@ class Scamp
   def initialize(options = {})
     options ||= {}
     raise ArgumentError, "You must pass an API key" unless options[:api_key]
+    raise ArgumentError, "You must pass a subdomain" unless options[:subdomain]
     
     @api_key = options[:api_key]
     @subdomain = options[:subdomain]
