@@ -107,6 +107,7 @@ In the channel/user conditions you can use the name, regex or ID of a user or ch
 * Allow multiple values for conditions, eg: :conditions => {:channel => [/someregex/, "Some channel"]}
 * Remove debugging output
 * Add support for a logger
+* Add paste/play support
 
 ## Known issues
 
