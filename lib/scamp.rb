@@ -15,13 +15,14 @@ class Scamp
   include Users
   
   attr_accessor :channels, :user_cache, :channel_cache
-  attr :matchers, :api_key
+  attr :matchers, :api_key, :subdomain
 
   def initialize(options = {})
     options ||= {}
     raise ArgumentError, "You must pass an API key" unless options[:api_key]
     
     @api_key = options[:api_key]
+    @subdomain = options[:subdomain]
     @channels = {}
     @user_cache = {}
     @channel_cache = {}

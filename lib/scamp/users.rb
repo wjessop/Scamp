@@ -22,7 +22,7 @@ class Scamp
     private
     
     def fetch_data_for(user_id)
-      url = "https://37s.campfirenow.com/users/#{user_id}.json"
+      url = "https://#{subdomain}.campfirenow.com/users/#{user_id}.json"
       http = EventMachine::HttpRequest.new(url).get(:head => {'authorization' => [api_key, 'X'], "Content-Type" => "application/json"})
       puts http.inspect
       http.callback do

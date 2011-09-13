@@ -7,7 +7,7 @@ class Scamp
     
     #  curl -vvv -H 'Content-Type: application/json' -d '{"message":{"body":"Yeeeeeaaaaaahh", "type":"Textmessage"}}' -u API_KEY:X https://37s.campfirenow.com/room/293788/speak.json
     def say(message, channel)
-      url = "https://37s.campfirenow.com/room/#{channel_id(channel)}/speak.json"
+      url = "https://#{subdomain}.campfirenow.com/room/#{channel_id(channel)}/speak.json"
       http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}, :body => Yajl::Encoder.encode({:message => {:body => message, :type => "Textmessage"}})
       
       http.errback { STDERR.puts "Error speaking: '#{message}' to #{channel_id(channel)}" }
@@ -20,7 +20,7 @@ class Scamp
     end
     
     def join(channel_id)
-      url = "https://37s.campfirenow.com/room/#{channel_id}/join.json"
+      url = "https://#{subdomain}.campfirenow.com/room/#{channel_id}/join.json"
       http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}
       
       http.errback { STDERR.puts "Error joining channel: #{channel_id}" }
@@ -52,7 +52,7 @@ class Scamp
     end
     
     def populate_channel_list
-      url = "https://37s.campfirenow.com/rooms.json"
+      url = "https://#{subdomain}.campfirenow.com/rooms.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
       http.errback { puts http.status }
       http.callback {
@@ -70,7 +70,7 @@ class Scamp
 
     def fetch_channel_data(channel_id)
       STDERR.puts "Fetching channel data for #{channel_id}"
-      url = "https://37s.campfirenow.com/room/#{channel_id}.json"
+      url = "https://#{subdomain}.campfirenow.com/room/#{channel_id}.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
       http.errback { STDERR.puts "Couldn't get data for channel #{channel_id} at url #{url}" }
       http.callback {
