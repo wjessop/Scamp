@@ -36,6 +36,10 @@ class Scamp
     connect(api_key, channel_list)
   end
   
+  def command_list
+    matchers.map{|m| [m.trigger, m.conditions] }
+  end
+  
   private
   
   def match trigger, params={}, &block

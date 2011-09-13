@@ -50,6 +50,10 @@ class Scamp
     
     private
     
+    def command_list
+      bot.command_list
+    end
+    
     def say(msg, channel_id_or_name = channel)
       bot.say(msg, channel_id_or_name)
     end
