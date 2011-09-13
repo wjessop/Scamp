@@ -68,6 +68,21 @@ Matchers are tested in order and all that satisfy the match and conditions will 
         say "#{user} said something in channel #{channel}", 237872
         say "#{user} said something in channel #{channel}", "System Administration"
       end
+      
+      # 
+      # A list of commands is available as command_list this matcher uses it
+      # to format a help text
+      # 
+      match "help" do
+        max_command_length = command_list.map{|cl| cl.first.to_s }.max_by(&:size).size
+        format_string = "%#{max_command_length + 1}s"
+        formatted_commands = command_list.map{|action, conds| "#{sprintf(format_string, action)} | #{conds.size == 0 ? '' : conds.inspect}"}
+        say <<-EOS
+    #{sprintf("%-#{max_command_length + 1}s", "Command match")} | Conditions
+    --------------------------------------------------------------------------------
+    #{formatted_commands.join("\n")}
+        EOS
+      end
     end
       
     # Connect and join some channels
