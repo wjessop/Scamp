@@ -68,9 +68,10 @@ Matchers are tested in order and all that satisfy the match and conditions will 
         say "#{user} said something in channel #{channel}", 237872
         say "#{user} said something in channel #{channel}", "System Administration"
       end
+    end
       
-      # Connect and join some channels
-      scamp.connect!([293788, "Monitoring"])
+    # Connect and join some channels
+    scamp.connect!([293788, "Monitoring"])
 
 In the channel/user conditions you can use the name, regex or ID of a user or channel, in say you can ise a string or ID, eg:
 
