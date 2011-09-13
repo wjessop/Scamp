@@ -15,7 +15,7 @@ class Scamp
   include Users
   
   attr_accessor :channels, :user_cache, :channel_cache
-  attr :matchers, :api_key, :subdomain
+  attr_accessor :matchers, :api_key, :subdomain
 
   def initialize(options = {})
     options ||= {}
