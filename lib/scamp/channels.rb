@@ -98,4 +98,4 @@ class Scamp
       channels[channel_name]["id"]
     end
   end
-end #class
+end

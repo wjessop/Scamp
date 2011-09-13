@@ -17,5 +17,5 @@ class Scamp
       end
     end
       
-  end #module
-end #class
+  end
+end
