@@ -18,6 +18,15 @@ describe Scamp do
     end
   end
 
+  describe "#verbose" do
+    it "should default to false" do
+      Scamp.new(@valid_params).verbose.should be_false
+    end
+    it "should be overridable at initialization" do
+      Scamp.new(@valid_params.merge(:verbose => true)).verbose.should be_true
+    end
+  end
+
   describe "#logger" do
     context "default logger" do
       before { @bot = Scamp.new(@valid_params) }
