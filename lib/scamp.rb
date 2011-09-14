@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'em-http-request'
 require 'yajl'
+require "logger"
 
 require "scamp/version"
 require 'scamp/connection'
@@ -47,7 +48,15 @@ class Scamp
   def command_list
     matchers.map{|m| [m.trigger, m.conditions] }
   end
-  
+
+  def logger
+    @logger ||= Logger.new(
+      STDOUT,
+      :level => (debug ? :debug : :info)
+    )
+  end
+  attr_writer :logger
+
   private
   
   def match trigger, params={}, &block
