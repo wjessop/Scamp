@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'em-http-request'
 require 'yajl'
+require "logger"
 
 require "scamp/version"
 require 'scamp/connection'
@@ -14,15 +15,22 @@ class Scamp
   include Channels
   include Users
   
-  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain
+  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain, :logger, :verbose
 
   def initialize(options = {})
     options ||= {}
     raise ArgumentError, "You must pass an API key" unless options[:api_key]
     raise ArgumentError, "You must pass a subdomain" unless options[:subdomain]
-    
-    @api_key = options[:api_key]
-    @subdomain = options[:subdomain]
+
+    options.each do |k,v|
+      s = "#{k}="
+      if respond_to?(s)
+        send(s, v)
+      else
+        logger.warn("Scamp initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!")
+      end
+    end
+
     @channels = {}
     @user_cache = {}
     @channel_cache = {}
@@ -40,7 +48,20 @@ class Scamp
   def command_list
     matchers.map{|m| [m.trigger, m.conditions] }
   end
-  
+
+  def logger
+    unless @logger
+      @logger = Logger.new(STDOUT)
+      @logger.level = (verbose ? Logger::DEBUG : Logger::INFO)
+    end
+    @logger
+  end
+
+  def verbose
+    @verbose = false if @verbose == nil
+    @verbose
+  end
+
   private
   
   def match trigger, params={}, &block
