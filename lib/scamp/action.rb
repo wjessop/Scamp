@@ -9,7 +9,7 @@
 class Scamp
   class Action
     
-    attr :matches, :bot
+    attr_accessor :matches, :bot
     
     def initialize(bot, action, message)
       @bot = bot
