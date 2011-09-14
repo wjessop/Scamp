@@ -24,7 +24,7 @@ class Scamp
         self.class.send :define_method, name_s do
           match[name_s]
         end
-      end
+      end if match.respond_to?(:names) # 1.8 doesn't support named captures
     end
     
     def channel
