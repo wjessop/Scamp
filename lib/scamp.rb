@@ -52,7 +52,7 @@ class Scamp
   def logger
     unless @logger
       @logger = Logger.new(STDOUT)
-      @logger.level = Logger::INFO
+      @logger.level = (verbose ? Logger::DEBUG : Logger::INFO)
     end
     @logger
   end

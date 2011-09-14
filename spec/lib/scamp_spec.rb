@@ -33,6 +33,10 @@ describe Scamp do
       it { @bot.logger.should be_a(Logger) }
       it { @bot.logger.level.should be == Logger::INFO }
     end
+    context "default logger in verbose mode" do
+      before { @bot = Scamp.new(@valid_params.merge(:verbose => true)) }
+      it { @bot.logger.level.should be == Logger::DEBUG }
+    end
     context "overriding default" do
       before do
         @custom_logger = Logger.new("/dev/null")
