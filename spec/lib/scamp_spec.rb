@@ -22,7 +22,14 @@ describe Scamp do
     context "default logger" do
       before { @bot = Scamp.new(@valid_params) }
       it { @bot.logger.should be_a(Logger) }
-      it { @bot.logger.level.should == Logger::INFO }
+      it { @bot.logger.level.should be == Logger::INFO }
+    end
+    context "overriding default" do
+      before do
+        @custom_logger = Logger.new("/dev/null")
+        @bot = Scamp.new(@valid_params.merge(:logger => @custom_logger))
+      end
+      it { @bot.logger.should be == @custom_logger }
     end
   end
 

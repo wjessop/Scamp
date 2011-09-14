@@ -15,7 +15,7 @@ class Scamp
   include Channels
   include Users
   
-  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain
+  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain, :logger
 
   def initialize(options = {})
     options ||= {}
@@ -56,7 +56,6 @@ class Scamp
     end
     @logger
   end
-  attr_writer :logger
 
   private
   
