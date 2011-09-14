@@ -2,11 +2,11 @@
 
 $:.unshift File.join(File.dirname(__FILE__), '../lib')
 
-require 'Scamp'
+require 'scamp'
 
 scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "37s")
 
-Scamp.behaviour do
+scamp.behaviour do
   # Match some regex limited to a channel condition based on a channel id
   match /^channel id (.+)$/, :conditions => {:channel => 401839} do
     # Reply in the current channel
