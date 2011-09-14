@@ -28,8 +28,7 @@ class Scamp
     end
     
     def channel
-      puts "Need the real channel name at #{__FILE__}:#{__LINE__}"
-      @message[:room_id]
+      bot.channel_name_for @message[:room_id]
     end
     
     def user
