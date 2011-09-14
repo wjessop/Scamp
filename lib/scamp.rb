@@ -20,9 +20,16 @@ class Scamp
     options ||= {}
     raise ArgumentError, "You must pass an API key" unless options[:api_key]
     raise ArgumentError, "You must pass a subdomain" unless options[:subdomain]
-    
-    @api_key = options[:api_key]
-    @subdomain = options[:subdomain]
+
+    options.each do |k,v|
+      s = "#{k}="
+      if respond_to?(s)
+        send(s, v)
+      else
+        logger.warn("Scamp initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!")
+      end
+    end
+
     @channels = {}
     @user_cache = {}
     @channel_cache = {}
