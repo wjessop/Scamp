@@ -24,21 +24,18 @@ class Scamp
     def fetch_data_for(user_id)
       url = "https://#{subdomain}.campfirenow.com/users/#{user_id}.json"
       http = EventMachine::HttpRequest.new(url).get(:head => {'authorization' => [api_key, 'X'], "Content-Type" => "application/json"})
-      puts http.inspect
+      logger.debug http.inspect
       http.callback do
-        STDERR.puts "Got the data for #{user_id}"
+        logger.debug "Got the data for #{user_id}"
         update_user_cache_with(user_id, Yajl::Parser.parse(http.response)['user'])
       end
       http.errback do
-        STDERR.puts "Couldn't fetch user data for #{user_id} with url #{url}"
-        STDERR.puts http.response_header.status
-        STDERR.puts http.response_header.inspect
-        STDERR.puts http.response.inspect
+        logger.error "Couldn't fetch user data for #{user_id} with url #{url}\n#{http.response_header.status.inspect}\n#{http.response_header.inspect}\n#{http.response.inspect}"
       end
     end
     
     def update_user_cache_with(user_id, data)
-      STDERR.puts "Updated user cache for #{data['name']}"
+      logger.debug "Updated user cache for #{data['name']}"
       user_cache[user_id] = data
     end
   end

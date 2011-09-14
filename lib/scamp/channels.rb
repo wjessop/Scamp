@@ -10,7 +10,7 @@ class Scamp
       url = "https://#{subdomain}.campfirenow.com/room/#{channel_id(channel)}/speak.json"
       http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}, :body => Yajl::Encoder.encode({:message => {:body => message, :type => "Textmessage"}})
       
-      http.errback { STDERR.puts "Error speaking: '#{message}' to #{channel_id(channel)}" }
+      http.errback { logger.error "Error speaking: '#{message}' to #{channel_id(channel)}" }
     end
     
     def paste(text, channel)
@@ -23,7 +23,7 @@ class Scamp
       url = "https://#{subdomain}.campfirenow.com/room/#{channel_id}/join.json"
       http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}
       
-      http.errback { STDERR.puts "Error joining channel: #{channel_id}" }
+      http.errback { logger.error "Error joining channel: #{channel_id}" }
       http.callback {
         yield if block_given?
       }
@@ -54,7 +54,7 @@ class Scamp
     def populate_channel_list
       url = "https://#{subdomain}.campfirenow.com/rooms.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
-      http.errback { puts http.status }
+      http.errback { logger.error "Error populating the channel list: #{http.status.inspect}" }
       http.callback {
         new_channels = {}
         Yajl::Parser.parse(http.response)['rooms'].each do |c|
@@ -69,12 +69,12 @@ class Scamp
     end
 
     def fetch_channel_data(channel_id)
-      STDERR.puts "Fetching channel data for #{channel_id}"
+      logger.debug "Fetching channel data for #{channel_id}"
       url = "https://#{subdomain}.campfirenow.com/room/#{channel_id}.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
-      http.errback { STDERR.puts "Couldn't get data for channel #{channel_id} at url #{url}" }
+      http.errback { logger.error "Couldn't get data for channel #{channel_id} at url #{url}" }
       http.callback {
-        puts "Fetched channel data for #{channel_id}"
+        logger.debug "Fetched channel data for #{channel_id}"
         room = Yajl::Parser.parse(http.response)['room']
         channel_cache[room["id"]] = room
         room['users'].each do |u|
@@ -89,12 +89,12 @@ class Scamp
       
       url = "https://streaming.campfirenow.com/room/#{channel_id}/live.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
-      http.errback { STDERR.puts "Couldn't stream channel #{channel_id} at url #{url}" }
+      http.errback { logger.error "Couldn't stream channel #{channel_id} at url #{url}" }
       http.stream {|chunk| json_parser << chunk }
     end
 
     def channel_id_from_channel_name(channel_name)
-      puts "Looking for channel id for #{channel_name}"
+      logger.debug "Looking for channel id for #{channel_name}"
       channels[channel_name]["id"]
     end
   end

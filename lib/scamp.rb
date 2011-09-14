@@ -27,7 +27,7 @@ class Scamp
       if respond_to?(s)
         send(s, v)
       else
-        logger.warn("Scamp initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!")
+        logger.warn "Scamp initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!"
       end
     end
 
@@ -42,6 +42,7 @@ class Scamp
   end
   
   def connect!(channel_list)
+    logger.info "Starting up"
     connect(api_key, channel_list)
   end
   

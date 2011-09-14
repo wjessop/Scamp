@@ -31,7 +31,7 @@ class Scamp
       elsif trigger.is_a? Regexp
         return trigger.match message_text
       else
-        STDERR.puts "Don't know what to do with #{trigger.inspect} at #{__FILE__}:#{__LINE__}"
+        logger.warn "Don't know what to do with #{trigger.inspect} at #{__FILE__}:#{__LINE__}"
       end
       false
     end
@@ -43,7 +43,7 @@ class Scamp
     end
     
     def conditions_satisfied_by(msg)
-      # STDERR.puts "Need to take into account nick, channel and regexps at #{__FILE__}:#{__LINE__}"
+      # logger.warn "Need to take into account nick, channel and regexps at #{__FILE__}:#{__LINE__}"
       
       # nick
       # channel name
@@ -55,10 +55,10 @@ class Scamp
       # item will be :nick or :channel
       # cond is the regex, int or string value.
       conditions.each do |item, cond|
-        STDERR.puts "Checking #{item} against #{cond}"
-        puts "msg is #{msg.inspect}"
+        logger.debug "Checking #{item} against #{cond}"
+        logger.debug "msg is #{msg.inspect}"
         if cond.is_a? Integer
-          # puts "item is #{msg[{:channel => :room_id, :user => :user_id}[item]]}"
+          # logger.debug "item is #{msg[{:channel => :room_id, :user => :user_id}[item]]}"
           return false unless msg[{:channel => :room_id, :user => :user_id}[item]] == cond
         elsif cond.is_a? String
           case item
@@ -67,7 +67,7 @@ class Scamp
           when :user
             return false unless bot.username_for(msg[:user_id]) == cond
           end
-          STDERR.puts "Don't know how to deal with a match item of #{item}, cond #{cond}"
+          logger.error "Don't know how to deal with a match item of #{item}, cond #{cond}"
         elsif cond.is_a? Regexp
           return false
           return false unless msg[item].match(cond)
