@@ -16,20 +16,27 @@ describe Scamp do
 
       logger_output.should =~ /WARN.*Scamp initialized with :fred => "estaire" but NO UNDERSTAND!/
     end
+  end
 
-    # Urg
-    def mock_logger
-      @logger_string = StringIO.new
-      @fake_logger = Logger.new(@logger_string)
-      Scamp.any_instance.should_receive(:logger).and_return(@fake_logger)
-    end
-
-    # Bleurgh
-    def logger_output
-      str = @logger_string.dup
-      str.rewind
-      str.read
+  describe "#logger" do
+    context "default logger" do
+      before { @bot = Scamp.new(@valid_params) }
+      it { @bot.logger.should be_a(Logger) }
+      it { @bot.logger.level.should == Logger::INFO }
     end
   end
 
+  # Urg
+  def mock_logger
+    @logger_string = StringIO.new
+    @fake_logger = Logger.new(@logger_string)
+    Scamp.any_instance.should_receive(:logger).and_return(@fake_logger)
+  end
+
+  # Bleurgh
+  def logger_output
+    str = @logger_string.dup
+    str.rewind
+    str.read
+  end
 end

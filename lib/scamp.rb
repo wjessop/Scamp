@@ -50,10 +50,11 @@ class Scamp
   end
 
   def logger
-    @logger ||= Logger.new(
-      STDOUT,
-      :level => (debug ? :debug : :info)
-    )
+    unless @logger
+      @logger = Logger.new(STDOUT)
+      @logger.level = Logger::INFO
+    end
+    @logger
   end
   attr_writer :logger
 
