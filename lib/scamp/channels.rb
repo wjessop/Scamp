@@ -99,6 +99,7 @@ class Scamp
       url = "https://streaming.campfirenow.com/room/#{channel_id}/live.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
       http.errback { logger.error "Couldn't stream channel #{channel_id} at url #{url}" }
+      http.callback { logger.error "Disconnected from #{url}" }
       http.stream {|chunk| json_parser << chunk }
     end
 

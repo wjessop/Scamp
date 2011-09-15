@@ -44,6 +44,7 @@ class Scamp
     
     def conditions_satisfied_by(msg)
       # logger.warn "Need to take into account nick, channel and regexps at #{__FILE__}:#{__LINE__}"
+      logger.info "Checking message against #{conditions.inspect}"
       
       # nick
       # channel name

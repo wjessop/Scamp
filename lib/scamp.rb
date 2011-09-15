@@ -76,6 +76,7 @@ class Scamp
   end
   
   def process_message(msg)
+    logger.debug "Received message #{msg.inspect}"
     matchers.each do |matcher|
       break if first_match_only & matcher.attempt(msg)
     end
