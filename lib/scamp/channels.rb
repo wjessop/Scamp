@@ -20,6 +20,7 @@ class Scamp
     end
     
     def join(channel_id)
+      logger.info "Joining channel #{channel_id}"
       url = "https://#{subdomain}.campfirenow.com/room/#{channel_id}/join.json"
       http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}
       
@@ -81,6 +82,14 @@ class Scamp
           update_user_cache_with(u["id"], u)
         end
       }
+    end
+    
+    def join_and_stream(id)
+      join(id) do
+        logger.info "Joined channel #{id} successfully"
+        fetch_channel_data(id)
+        stream(id)
+      end
     end
     
     def stream(channel_id)
