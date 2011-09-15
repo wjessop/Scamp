@@ -77,7 +77,7 @@ class Scamp
   
   def process_message(msg)
     matchers.each do |matcher|
-      matcher.attempt(msg)
+      break if first_match_only & matcher.attempt(msg)
     end
   end
 end
