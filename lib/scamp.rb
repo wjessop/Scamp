@@ -14,8 +14,8 @@ class Scamp
   include Connection
   include Channels
   include Users
-  
-  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain, :logger, :verbose
+
+  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain, :logger, :verbose, :first_match_only
 
   def initialize(options = {})
     options ||= {}
@@ -63,8 +63,13 @@ class Scamp
     @verbose
   end
 
+  def first_match_only
+    @first_match_only = false if @first_match_only == nil
+    @first_match_only
+  end
+
   private
-  
+
   def match trigger, params={}, &block
     params ||= {}
     matchers << Matcher.new(self, {:trigger => trigger, :action => block, :conditions => params[:conditions]})

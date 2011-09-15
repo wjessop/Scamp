@@ -46,6 +46,15 @@ describe Scamp do
     end
   end
 
+  describe "#first_match_only" do
+    it "should default to false" do
+      a(Scamp).first_match_only.should be_false
+    end
+    it "should be settable" do
+      a(Scamp, :first_match_only => true).first_match_only.should be_true
+    end
+  end
+
   def a klass, params={}
     params ||= {}
     params = @valid_params.merge(params) if klass == Scamp
