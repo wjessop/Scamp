@@ -7,12 +7,12 @@ describe Scamp do
 
   describe "#initialize" do
     it "should work with valid params" do
-      Scamp.new(@valid_params).should be_a(Scamp)
+      a(Scamp).should be_a(Scamp)
     end
     it "should warn if given an option it doesn't know" do
       mock_logger
 
-      Scamp.new(@valid_params.merge(:fred => "estaire")).should be_a(Scamp)
+      a(Scamp, :fred => "estaire").should be_a(Scamp)
 
       logger_output.should =~ /WARN.*Scamp initialized with :fred => "estaire" but NO UNDERSTAND!/
     end
@@ -20,30 +20,36 @@ describe Scamp do
 
   describe "#verbose" do
     it "should default to false" do
-      Scamp.new(@valid_params).verbose.should be_false
+      a(Scamp).verbose.should be_false
     end
     it "should be overridable at initialization" do
-      Scamp.new(@valid_params.merge(:verbose => true)).verbose.should be_true
+      a(Scamp, :verbose => true).verbose.should be_true
     end
   end
 
   describe "#logger" do
     context "default logger" do
-      before { @bot = Scamp.new(@valid_params) }
+      before { @bot = a Scamp }
       it { @bot.logger.should be_a(Logger) }
       it { @bot.logger.level.should be == Logger::INFO }
     end
     context "default logger in verbose mode" do
-      before { @bot = Scamp.new(@valid_params.merge(:verbose => true)) }
+      before { @bot = a Scamp, :verbose => true }
       it { @bot.logger.level.should be == Logger::DEBUG }
     end
     context "overriding default" do
       before do
         @custom_logger = Logger.new("/dev/null")
-        @bot = Scamp.new(@valid_params.merge(:logger => @custom_logger))
+        @bot = a Scamp, :logger => @custom_logger
       end
       it { @bot.logger.should be == @custom_logger }
     end
+  end
+
+  def a klass, params={}
+    params ||= {}
+    params = @valid_params.merge(params) if klass == Scamp
+    klass.new(params)
   end
 
   # Urg
