@@ -103,11 +103,10 @@ In the channel/user conditions you can use the name, regex or ID of a user or ch
 
 ## TODO
 
-* Write the tests
+* Write more tests
 * Allow multiple values for conditions, eg: :conditions => {:channel => [/someregex/, "Some channel"]}
-* Remove debugging output
-* Add support for a logger
 * Add paste/play support
+* Add option to stop bot responding to itself
 
 ## Known issues
 
