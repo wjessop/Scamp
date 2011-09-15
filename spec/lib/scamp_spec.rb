@@ -46,6 +46,50 @@ describe Scamp do
     end
   end
 
+  describe "#first_match_only" do
+    it "should default to false" do
+      a(Scamp).first_match_only.should be_false
+    end
+    it "should be settable" do
+      a(Scamp, :first_match_only => true).first_match_only.should be_true
+    end
+  end
+
+  describe "private methods" do
+
+    describe "#process_message" do
+      before do
+        @bot = a Scamp
+        $attempts = 0 # Yes, I hate it too. Works though.
+        @message = {:body => "my message here"}
+
+        @bot.behaviour do
+          2.times { match(/.*/) { $attempts += 1 } }
+        end
+      end
+      after { $attempts = nil }
+      context "with first_match_only not set" do
+        before { @bot.first_match_only.should be_false }
+        it "should process all matchers which attempt the message" do
+          @bot.send(:process_message, @message)
+          $attempts.should be == 2
+        end
+      end
+      context "with first_match_only set" do
+        before do
+          @bot.first_match_only = true
+          @bot.first_match_only.should be_true
+        end
+        it "should only process the first matcher which attempts the message" do
+          @bot.send(:process_message, @message)
+          $attempts.should be == 1
+        end
+      end
+    end
+
+
+  end
+
   def a klass, params={}
     params ||= {}
     params = @valid_params.merge(params) if klass == Scamp
