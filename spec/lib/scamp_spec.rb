@@ -86,8 +86,63 @@ describe Scamp do
         end
       end
     end
-
-
+  end
+  
+  describe "matching" do
+    describe "strings" do
+      it "should match an exact string" do
+        canary = mock
+        canary.expects(:phew).once
+        canary.expects(:bang).never
+        
+        bot = a Scamp
+        bot.behaviour do
+          match("a string") {canary.phew}
+          match("another string") {canary.bang}
+          match("a string like no other") {canary.bang}
+        end
+        
+        bot.send(:process_message, {:body => "a string"})
+      end
+    end
+    
+    describe "regexes" do
+      it "should match a regex" do
+        canary = mock
+        canary.expects(:ping).twice
+        
+        bot = a Scamp
+        bot.behaviour do
+          match /foo/ do
+            canary.ping
+          end
+        end
+        
+        bot.send(:process_message, {:body => "something foo other thing"})
+        bot.send(:process_message, {:body => "foomaster"})
+      end
+      
+      it "should make named captures vailable as methods" do
+        canary = mock
+        canary.expects(:one).with("first").never
+        canary.expects(:two).with("the rest of it")
+        # canary.expects(:bang).never
+        
+        bot = a Scamp
+        bot.behaviour do
+          match /^please match (?<yousaidthis>\w+) and (?<andthis>.+)$/ do
+            canary.one(yousaidthis)
+            canary.two(andthis)
+            # canary.bang
+          end
+        end
+        sleep(1)
+        bot.send(:process_message, {:body => "please match first and the rest of it"})
+        
+      end
+      
+      it "should make captures available in an array"
+    end
   end
 
   def a klass, params={}
