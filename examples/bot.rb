@@ -18,16 +18,6 @@ scamp.behaviour do
     say "Limit a match to a channel condition based on a string"
   end
   
-  # Limit a match to a channel condition based on a regex
-  match /^channel regex (.+)$/, :conditions => {:channel => /someregex/} do
-    say "Limit a match to a channel condition based on a regex"
-  end
-  
-  # Limit a match to a user condition based on a regex
-  match /^user regex (.+)$/, :conditions => {:user => /someregex/} do
-    say "Limit a match to a user condition based on a regex"
-  end
-
   # Limit a match to a user condition based on a string
   match /^user name (.+)$/, :conditions => {:user => "Will Jessop"} do
     say "Limit a match to a user condition based on a string"

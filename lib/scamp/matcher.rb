@@ -43,18 +43,10 @@ class Scamp
     end
     
     def conditions_satisfied_by(msg)
-      # bot.logger.warn "Need to take into account nick, channel and regexps at #{__FILE__}:#{__LINE__}"
-      bot.logger.info "Checking message against #{conditions.inspect}"
-      
-      # nick
-      # channel name
-      # nick regex
-      # channel regex
-      
-      #{"room_id":1,"created_at":"2009-12-01 23:44:40","body":"hello","id":1,"user_id":1,"type":"TextMessage"}
+      bot.logger.debug "Checking message against #{conditions.inspect}"
       
       # item will be :nick or :channel
-      # cond is the regex, int or string value.
+      # cond is the int or string value.
       conditions.each do |item, cond|
         bot.logger.debug "Checking #{item} against #{cond}"
         bot.logger.debug "msg is #{msg.inspect}"
@@ -69,9 +61,6 @@ class Scamp
             return false unless bot.username_for(msg[:user_id]) == cond
           end
           bot.logger.error "Don't know how to deal with a match item of #{item}, cond #{cond}"
-        elsif cond.is_a? Regexp
-          return false
-          return false unless msg[item].match(cond)
         end
       end
       true

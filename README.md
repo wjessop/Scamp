@@ -41,15 +41,15 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       # 
       # Limit the match to certain channels, users or both.
       # 
-      match /^Lets match (.+)$/, :conditions => {:channel => /someregex/} do
+      match /^Lets match (.+)$/, :conditions => {:channel => "Some Channel"} do
         say "Only said if channel name mathces /someregex/"
       end
       
-      match "some text", :conditions => {:user => /someregex/} do
+      match "some text", :conditions => {:user => "Some User"} do
         say "Only said if user name mathces /someregex/"
       end
       
-      match /some other text/, :conditions => {:user => /someregex/, :channel => /some other regex/} do
+      match /some other text/, :conditions => {:user => "Some User", :channel => 123456} do
         say "You can mix conditions"
       end
       

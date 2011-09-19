@@ -3,6 +3,8 @@ require "spec_helper"
 describe Scamp do
   before do
     @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"}
+    @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
+    @valid_channel_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
   end
 
   describe "#initialize" do
@@ -89,15 +91,96 @@ describe Scamp do
   end
   
   describe "matching" do
-    describe "strings" do
-      it "should match an exact string" do
+    
+    context "with conditions" do
+      it "should limit matches by channel id" do
         canary = mock
-        canary.expects(:phew).once
+        canary.expects(:lives).once
         canary.expects(:bang).never
         
         bot = a Scamp
         bot.behaviour do
-          match("a string") {canary.phew}
+          match("a string", :conditions => {:channel => 123}) {canary.lives}
+          match("a string", :conditions => {:channel => 456}) {canary.bang}
+        end
+        
+        bot.send(:process_message, {:room_id => 123, :body => "a string"})
+      end
+      
+      it "should limit matches by channel name" do
+        canary = mock
+        canary.expects(:lives).once
+        canary.expects(:bang).never
+        
+        bot = a Scamp
+        bot.behaviour do
+          match("a string", :conditions => {:channel => "foo"}) {canary.lives}
+          match("a string", :conditions => {:channel => "bar"}) {canary.bang}
+        end
+        
+        bot.channel_cache = @valid_channel_cache_data
+        
+        bot.send(:process_message, {:room_id => 123, :body => "a string"})
+      end
+      
+      it "should limit matches by user id" do
+        canary = mock
+        canary.expects(:lives).once
+        canary.expects(:bang).never
+        
+        bot = a Scamp
+        bot.behaviour do
+          match("a string", :conditions => {:user => 123}) {canary.lives}
+          match("a string", :conditions => {:user => 456}) {canary.bang}
+        end
+        
+        bot.send(:process_message, {:user_id => 123, :body => "a string"})
+      end
+      
+      it "should limit matches by user name" do
+        canary = mock
+        canary.expects(:lives).once
+        canary.expects(:bang).never
+        
+        bot = a Scamp
+        bot.behaviour do
+          match("a string", :conditions => {:user => "foo"}) {canary.lives}
+          match("a string", :conditions => {:user => "bar"}) {canary.bang}
+        end
+        
+        bot.user_cache = @valid_user_cache_data
+        
+        bot.send(:process_message, {:user_id => 123, :body => "a string"})
+      end
+      
+      it "should limit matches by channel and user" do
+        canary = mock
+        canary.expects(:lives).once
+        canary.expects(:bang).never
+        
+        bot = a Scamp
+        bot.behaviour do
+          match("a string", :conditions => {:channel => 123, :user => 123}) {canary.lives}
+          match("a string", :conditions => {:channel => 456, :user => 456}) {canary.bang}
+        end
+        
+        bot.channel_cache = @valid_channel_cache_data
+        bot.user_cache = @valid_user_cache_data
+        bot.send(:process_message, {:room_id => 123, :user_id => 123, :body => "a string"})
+        bot.send(:process_message, {:room_id => 123, :user_id => 456, :body => "a string"})
+        bot.send(:process_message, {:room_id => 456, :user_id => 123, :body => "a string"})
+      end
+    end
+    
+    describe "strings" do
+      it "should match an exact string" do
+        canary = mock
+        canary.expects(:lives).once
+        canary.expects(:bang).never
+        
+        bot = a Scamp
+        bot.behaviour do
+          match("a string") {canary.lives}
           match("another string") {canary.bang}
           match("a string like no other") {canary.bang}
         end
@@ -124,24 +207,35 @@ describe Scamp do
       
       it "should make named captures vailable as methods" do
         canary = mock
-        canary.expects(:one).with("first").never
+        canary.expects(:one).with("first")
         canary.expects(:two).with("the rest of it")
-        # canary.expects(:bang).never
         
         bot = a Scamp
         bot.behaviour do
           match /^please match (?<yousaidthis>\w+) and (?<andthis>.+)$/ do
             canary.one(yousaidthis)
             canary.two(andthis)
-            # canary.bang
           end
         end
-        sleep(1)
-        bot.send(:process_message, {:body => "please match first and the rest of it"})
         
+        bot.send(:process_message, {:body => "please match first and the rest of it"})
       end
       
-      it "should make captures available in an array"
+      it "should make matches available in an array" do
+        canary = mock
+        canary.expects(:one).with("first")
+        canary.expects(:two).with("the rest of it")
+        
+        bot = a Scamp
+        bot.behaviour do
+          match /^please match (\w+) and (.+)$/ do
+            canary.one(matches[0])
+            canary.two(matches[1])
+          end
+        end
+        
+        bot.send(:process_message, {:body => "please match first and the rest of it"})
+      end
     end
   end
 
