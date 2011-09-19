@@ -16,7 +16,8 @@ Matchers are tested in order and all that satisfy the match and conditions will 
 
     require 'scamp'
 
-    scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain")
+    # Add :verbose => true to get debug output, otherwise the logger will output INFO
+    scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :verbose => true)
     
     scamp.behaviour do
       # 
