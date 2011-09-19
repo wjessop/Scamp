@@ -97,7 +97,8 @@ class Scamp
       json_parser.on_parse_complete = method(:process_message)
       
       url = "https://streaming.campfirenow.com/room/#{channel_id}/live.json"
-      http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
+      # Timeout per https://github.com/igrigorik/em-http-request/wiki/Redirects-and-Timeouts
+      http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 0).get :head => {'authorization' => [api_key, 'X']}
       http.errback { logger.error "Couldn't stream channel #{channel_id} at url #{url}" }
       http.callback { logger.error "Disconnected from #{url}" }
       http.stream {|chunk| json_parser << chunk }
