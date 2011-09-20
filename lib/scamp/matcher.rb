@@ -26,7 +26,7 @@ class Scamp
     private
     
     def triggered_by(message_text)
-      if required_prefix
+      if required_prefix 
         message_text = handle_prefix(message_text)
         return false if message_text == false
       end
@@ -41,11 +41,7 @@ class Scamp
     end
     
     def handle_prefix(message_text)
-      bot.logger.warn "TEXT: #{message_text}"
-      bot.logger.warn "PREFIX: #{required_prefix}".inspect
-      
       if required_prefix.is_a? String
-        bot.logger.warn "GSUBD: "+ message_text[0...required_prefix.length]
         if required_prefix == message_text[0...required_prefix.length]
           message_text.gsub(required_prefix,'') 
         else
@@ -53,7 +49,6 @@ class Scamp
         end
       elsif required_prefix.is_a? Regexp
         if required_prefix.match message_text
-          bot.logger.warn "GSUBD"+message_text.gsub(required_prefix,'')
           message_text.gsub(required_prefix,'')
         else
           false
