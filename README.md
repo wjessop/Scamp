@@ -54,7 +54,7 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       end
       
       # 
-      # Named caputres become avaiable in your match block
+      # Named captures become avaiable in your match block
       # 
       match /^say (?<yousaid>.+)$/ do
         say "You said #{yousaid}"
