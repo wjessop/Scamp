@@ -188,8 +188,32 @@ describe Scamp do
         bot.send(:process_message, {:body => "a string"})
       end
       
+      it "should not match without prefix when required_prefix is true" do
+        canary = mock
+        canary.expects(:lives).never
+        
+        bot = a Scamp, :required_prefix => 'Bot: '
+        bot.behaviour do
+          match("a string") {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "a string"})
+      end
+
+      it "should match with exact prefix when required_prefix is true" do
+        canary = mock
+        canary.expects(:lives).once
+        
+        bot = a Scamp, :required_prefix => 'Bot: '
+        bot.behaviour do
+          match("a string") {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "Bot: a string"})
+      end
     end
     
+
     describe "regexes" do
       it "should match a regex" do
         canary = mock
@@ -236,6 +260,35 @@ describe Scamp do
         end
         
         bot.send(:process_message, {:body => "please match first and the rest of it"})
+      end
+      
+      it "should not match without prefix when required_prefix is present" do
+        canary = mock
+        canary.expects(:lives).never
+        
+        bot = a Scamp, :required_prefix => /^Bot[\:,\s]+/i
+        bot.behaviour do
+          match(/a string/) {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "a string"})
+        bot.send(:process_message, {:body => "some kind of a string"})
+        bot.send(:process_message, {:body => "a string!!!"})
+      end
+
+      it "should match with regex prefix when required_prefix is present" do
+        canary = mock
+        canary.expects(:lives).at_least(4)
+        
+        bot = a Scamp, :required_prefix => /^Bot\W{1,2}/i
+        bot.behaviour do
+          match(/a string/) {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "Bot, a string"})
+        bot.send(:process_message, {:body => "Bot a string"})
+        bot.send(:process_message, {:body => "bot: a string"})
+        bot.send(:process_message, {:body => "Bot: a string oh my!"})
       end
     end
   end

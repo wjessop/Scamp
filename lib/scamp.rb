@@ -16,7 +16,7 @@ class Scamp
   include Users
 
   attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain,
-                :logger, :verbose, :first_match_only, :require_prefix, :channels_to_join
+                :logger, :verbose, :first_match_only, :required_prefix, :channels_to_join
 
   def initialize(options = {})
     options ||= {}
@@ -74,7 +74,7 @@ class Scamp
 
   def match trigger, params={}, &block
     params ||= {}
-    matchers << Matcher.new(self, {:trigger => trigger, :action => block, :conditions => params[:conditions]})
+    matchers << Matcher.new(self, {:trigger => trigger, :action => block, :conditions => params[:conditions], :required_prefix => required_prefix})
   end
   
   def process_message(msg)
