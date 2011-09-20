@@ -190,11 +190,11 @@ describe Scamp do
       
       it "should not match without prefix when required_prefix is true" do
         canary = mock
-        canary.expects(:lives).never
+        canary.expects(:bang).never
         
         bot = a Scamp, :required_prefix => 'Bot: '
         bot.behaviour do
-          match("a string") {canary.lives}
+          match("a string") {canary.bang}
         end
         
         bot.send(:process_message, {:body => "a string"})
@@ -264,11 +264,11 @@ describe Scamp do
       
       it "should not match without prefix when required_prefix is present" do
         canary = mock
-        canary.expects(:lives).never
+        canary.expects(:bang).never
         
         bot = a Scamp, :required_prefix => /^Bot[\:,\s]+/i
         bot.behaviour do
-          match(/a string/) {canary.lives}
+          match(/a string/) {canary.bang}
         end
         
         bot.send(:process_message, {:body => "a string"})
@@ -278,7 +278,7 @@ describe Scamp do
 
       it "should match with regex prefix when required_prefix is present" do
         canary = mock
-        canary.expects(:lives).at_least(4)
+        canary.expects(:lives).times(4)
         
         bot = a Scamp, :required_prefix => /^Bot\W{1,2}/i
         bot.behaviour do
