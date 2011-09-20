@@ -15,7 +15,7 @@ class Scamp
   include Channels
   include Users
 
-  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain, :logger, :verbose, :first_match_only
+  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain, :logger, :verbose, :first_match_only, :channels_to_join
 
   def initialize(options = {})
     options ||= {}
@@ -30,7 +30,8 @@ class Scamp
         logger.warn "Scamp initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!"
       end
     end
-
+    
+    @channels_to_join = []
     @channels = {}
     @user_cache = {}
     @channel_cache = {}

@@ -100,7 +100,7 @@ class Scamp
       # Timeout per https://github.com/igrigorik/em-http-request/wiki/Redirects-and-Timeouts
       http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 0).get :head => {'authorization' => [api_key, 'X']}
       http.errback { logger.error "Couldn't stream channel #{channel_id} at url #{url}" }
-      http.callback { logger.error "Disconnected from #{url}" }
+      http.callback { logger.error "Disconnected from #{url}"; channels_to_join << channel_id}
       http.stream {|chunk| json_parser << chunk }
     end
 
