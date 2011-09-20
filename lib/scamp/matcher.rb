@@ -41,7 +41,7 @@ class Scamp
     end
     
     def handle_prefix(message_text)
-      return false unles message_text
+      return false unless message_text
       if required_prefix.is_a? String
         if required_prefix == message_text[0...required_prefix.length]
           message_text.gsub(required_prefix,'') 
