@@ -26,9 +26,9 @@ class Scamp
     private
     
     def triggered_by(message_text)
-      if required_prefix 
+      if message_text && required_prefix 
         message_text = handle_prefix(message_text)
-        return false if message_text == false
+        return false unless message_text
       end
       if trigger.is_a? String
         return true if trigger == message_text
@@ -41,6 +41,7 @@ class Scamp
     end
     
     def handle_prefix(message_text)
+      return false unles message_text
       if required_prefix.is_a? String
         if required_prefix == message_text[0...required_prefix.length]
           message_text.gsub(required_prefix,'') 
