@@ -2,11 +2,11 @@ require "spec_helper"
 
 describe Scamp do
   before do
-    @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"}
+    @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
     @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
     @valid_channel_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
   end
-
+  
   describe "#initialize" do
     it "should work with valid params" do
       a(Scamp).should be_a(Scamp)
@@ -187,6 +187,7 @@ describe Scamp do
         
         bot.send(:process_message, {:body => "a string"})
       end
+      
     end
     
     describe "regexes" do
@@ -249,7 +250,7 @@ describe Scamp do
   def mock_logger
     @logger_string = StringIO.new
     @fake_logger = Logger.new(@logger_string)
-    Scamp.any_instance.should_receive(:logger).and_return(@fake_logger)
+    Scamp.any_instance.expects(:logger).returns(@fake_logger)
   end
 
   # Bleurgh
