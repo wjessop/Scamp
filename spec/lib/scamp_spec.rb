@@ -2,11 +2,11 @@ require "spec_helper"
 
 describe Scamp do
   before do
-    @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"}
+    @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
     @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
     @valid_channel_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
   end
-
+  
   describe "#initialize" do
     it "should work with valid params" do
       a(Scamp).should be_a(Scamp)
@@ -187,8 +187,33 @@ describe Scamp do
         
         bot.send(:process_message, {:body => "a string"})
       end
+      
+      it "should not match without prefix when required_prefix is true" do
+        canary = mock
+        canary.expects(:lives).never
+        
+        bot = a Scamp, :required_prefix => 'Bot: '
+        bot.behaviour do
+          match("a string") {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "a string"})
+      end
+
+      it "should match with exact prefix when required_prefix is true" do
+        canary = mock
+        canary.expects(:lives).once
+        
+        bot = a Scamp, :required_prefix => 'Bot: '
+        bot.behaviour do
+          match("a string") {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "Bot: a string"})
+      end
     end
     
+
     describe "regexes" do
       it "should match a regex" do
         canary = mock
@@ -236,6 +261,35 @@ describe Scamp do
         
         bot.send(:process_message, {:body => "please match first and the rest of it"})
       end
+      
+      it "should not match without prefix when required_prefix is present" do
+        canary = mock
+        canary.expects(:lives).never
+        
+        bot = a Scamp, :required_prefix => /^Bot[\:,\s]+/i
+        bot.behaviour do
+          match(/a string/) {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "a string"})
+        bot.send(:process_message, {:body => "some kind of a string"})
+        bot.send(:process_message, {:body => "a string!!!"})
+      end
+
+      it "should match with regex prefix when required_prefix is present" do
+        canary = mock
+        canary.expects(:lives).at_least(4)
+        
+        bot = a Scamp, :required_prefix => /^Bot\W{1,2}/i
+        bot.behaviour do
+          match(/a string/) {canary.lives}
+        end
+        
+        bot.send(:process_message, {:body => "Bot, a string"})
+        bot.send(:process_message, {:body => "Bot a string"})
+        bot.send(:process_message, {:body => "bot: a string"})
+        bot.send(:process_message, {:body => "Bot: a string oh my!"})
+      end
     end
   end
 
@@ -249,7 +303,7 @@ describe Scamp do
   def mock_logger
     @logger_string = StringIO.new
     @fake_logger = Logger.new(@logger_string)
-    Scamp.any_instance.should_receive(:logger).and_return(@fake_logger)
+    Scamp.any_instance.expects(:logger).returns(@fake_logger)
   end
 
   # Bleurgh

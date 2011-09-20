@@ -1,6 +1,6 @@
 class Scamp
   class Matcher
-    attr_accessor :conditions, :trigger, :action, :bot
+    attr_accessor :conditions, :trigger, :action, :bot, :required_prefix
     
     def initialize(bot, params = {})
       params ||= {}
@@ -26,6 +26,10 @@ class Scamp
     private
     
     def triggered_by(message_text)
+      if message_text && required_prefix 
+        message_text = handle_prefix(message_text)
+        return false unless message_text
+      end
       if trigger.is_a? String
         return true if trigger == message_text
       elsif trigger.is_a? Regexp
@@ -35,6 +39,25 @@ class Scamp
       end
       false
     end
+    
+    def handle_prefix(message_text)
+      return false unless message_text
+      if required_prefix.is_a? String
+        if required_prefix == message_text[0...required_prefix.length]
+          message_text.gsub(required_prefix,'') 
+        else
+          false
+        end
+      elsif required_prefix.is_a? Regexp
+        if required_prefix.match message_text
+          message_text.gsub(required_prefix,'')
+        else
+          false
+        end
+      else
+        false
+      end
+    end 
     
     def run(msg, match = nil)
       action_run = Action.new(bot, action, msg)
