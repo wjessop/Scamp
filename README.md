@@ -111,6 +111,10 @@ In the channel/user conditions you can use the name, regex or ID of a user or ch
     say "#{user} said something in channel #{channel}", 237872
     say "#{user} said something in channel #{channel}", "System Administration"
 
+By default Scamp listens to itself. This could either be fun, or dangerous, you decide. You can turn this off by passing :first\_match\_only => true in the initialisation options
+
+        scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :first_match_only => true)
+
 ## TODO
 
 * Write more tests
