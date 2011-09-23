@@ -1,16 +1,5 @@
 class Scamp
   module Users
-    
-    # <user>
-    #   <id type="integer">1</id>
-    #   <name>Jason Fried</name>
-    #   <email-address>jason@37signals.com</email-address>
-    #   <admin type="boolean">true</admin>
-    #   <created-at type="datetime">2009-11-20T16:41:39Z</created-at>
-    #   <type>Member</type>
-    #   <avatar-url>http://asset0.37img.com/global/.../avatar.png</avatar-url>
-    # </user>
-    
     # Return the user_id if we haven't got the real name and
     # kick off a user data fetch
     def username_for(user_id)
