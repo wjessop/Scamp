@@ -7,15 +7,15 @@ require 'scamp'
 scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "37s")
 
 scamp.behaviour do
-  # Match some regex limited to a channel condition based on a channel id
-  match /^channel id (.+)$/, :conditions => {:channel => 401839} do
-    # Reply in the current channel
-    say "Match some regex limited to a channel condition based on a channel id"
+  # Match some regex limited to a room condition based on a room id
+  match /^room id (.+)$/, :conditions => {:room => 401839} do
+    # Reply in the current room
+    say "Match some regex limited to a room condition based on a room id"
   end
   
-  # Limit a match to a channel condition based on a string
-  match "channel name check", :conditions => {:channel => "Monitoring"} do
-    say "Limit a match to a channel condition based on a string"
+  # Limit a match to a room condition based on a string
+  match "room name check", :conditions => {:room => "Monitoring"} do
+    say "Limit a match to a room condition based on a string"
   end
   
   # Limit a match to a user condition based on a string
@@ -28,10 +28,10 @@ scamp.behaviour do
      say "Limit a match to a user condition based on an ID"
    end
    
-   # Limit a match to a channel & user condition combined
-   match /^something (.+)$/, :conditions => {:channel => "Monitoring", :user => "Will Jessop"} do
-     # Reply in the current channel
-     say "Limit a match to a channel & user condition combined"
+   # Limit a match to a room & user condition combined
+   match /^something (.+)$/, :conditions => {:room => "Monitoring", :user => "Will Jessop"} do
+     # Reply in the current room
+     say "Limit a match to a room & user condition combined"
    end
      
    # Match text with a regex, access the captures from the match object
@@ -44,16 +44,16 @@ scamp.behaviour do
      say "You said #{yousaid}"
    end
    
-   # Simple string match, interpolating the channel and user in response.
+   # Simple string match, interpolating the room and user in response.
    match "something" do |data|
-     # Send the response to a different channel
-     say "#{user} said something in channel #{channel}", "Robot Army"
+     # Send the response to a different room
+     say "#{user} said something in room #{room}", "Robot Army"
      
-     # Send the response to a different channel, using the channel ID
-     say "#{user} said something in channel #{channel}", 293788
+     # Send the response to a different room, using the room ID
+     say "#{user} said something in room #{room}", 293788
      
-     # Send the response to the originating channel
-     say "#{user} said something in channel #{channel}"
+     # Send the response to the originating room
+     say "#{user} said something in room #{room}"
    end
    
    # Play some sounds
@@ -62,11 +62,11 @@ scamp.behaviour do
      play "drama"
    end
    
-   match "multi-condition match", :conditions => {:channel => [401839, "Monitoring"], :user => ["Will Jessop", "Noah Lorang"]} do
-     # Reply in the current channel
+   match "multi-condition match", :conditions => {:room => [401839, "Monitoring"], :user => ["Will Jessop", "Noah Lorang"]} do
+     # Reply in the current room
      say "multi-condition match"
    end
 end
 
-# FIXME: this does if the channel doesn't exist. Need a better error.
+# FIXME: this does if the room doesn't exist. Need a better error.
 scamp.connect!([293788, "Monitoring"])

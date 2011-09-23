@@ -68,18 +68,18 @@ class Scamp
     def conditions_satisfied_by(msg)
       bot.logger.debug "Checking message against #{conditions.inspect}"
       
-      # item will be :user or :channel
+      # item will be :nick or :room
       # cond is the int or string value.
       conditions.each do |item, cond|
         bot.logger.debug "Checking #{item} against #{cond}"
         bot.logger.debug "msg is #{msg.inspect}"
         if cond.is_a? Integer
-          # bot.logger.debug "item is #{msg[{:channel => :room_id, :user => :user_id}[item]]}"
-          return false unless msg[{:channel => :room_id, :user => :user_id}[item]] == cond
+          # bot.logger.debug "item is #{msg[{:room => :room_id, :user => :user_id}[item]]}"
+          return false unless msg[{:room => :room_id, :user => :user_id}[item]] == cond
         elsif cond.is_a? String
           case item
-          when :channel
-            return false unless bot.channel_name_for(msg[:room_id]) == cond
+          when :room
+            return false unless bot.room_name_for(msg[:room_id]) == cond
           when :user
             return false unless bot.username_for(msg[:user_id]) == cond
           end

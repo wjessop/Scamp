@@ -5,7 +5,7 @@ require "logger"
 
 require "scamp/version"
 require 'scamp/connection'
-require 'scamp/channels'
+require 'scamp/rooms'
 require 'scamp/users'
 require 'scamp/matcher'
 require 'scamp/action'
@@ -13,12 +13,12 @@ require 'scamp/messages'
 
 class Scamp
   include Connection
-  include Channels
+  include Rooms
   include Users
   include Messages
 
-  attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain,
-                :logger, :verbose, :first_match_only, :required_prefix, :channels_to_join
+  attr_accessor :rooms, :user_cache, :room_cache, :matchers, :api_key, :subdomain,
+                :logger, :verbose, :first_match_only, :required_prefix, :rooms_to_join
 
   def initialize(options = {})
     options ||= {}
@@ -34,10 +34,10 @@ class Scamp
       end
     end
     
-    @channels_to_join = []
-    @channels = {}
+    @rooms_to_join = []
+    @rooms = {}
     @user_cache = {}
-    @channel_cache = {}
+    @room_cache = {}
     @matchers ||= []
   end
   
@@ -45,9 +45,9 @@ class Scamp
     instance_eval &block
   end
   
-  def connect!(channel_list)
+  def connect!(room_list)
     logger.info "Starting up"
-    connect(api_key, channel_list)
+    connect(api_key, room_list)
   end
   
   def command_list

@@ -1,6 +1,6 @@
 #
 # Actions are run in the context of a Scamp::Action.
-# This allows us to make channel, user etc. methods
+# This allows us to make room, user etc. methods
 # available on a per-message basis
 #
 
@@ -27,12 +27,12 @@ class Scamp
       end if match.respond_to?(:names) # 1.8 doesn't support named captures
     end
     
-    def channel_id
+    def room_id
       @message[:room_id]
     end
     
-    def channel
-      bot.channel_name_for @message[:room_id]
+    def room
+      bot.room_name_for @message[:room_id]
     end
     
     def user
@@ -57,12 +57,12 @@ class Scamp
       bot.command_list
     end
     
-    def say(msg, channel_id_or_name = channel_id)
-      bot.say(msg, channel_id_or_name)
+    def say(msg, room_id_or_name = room_id)
+      bot.say(msg, room_id_or_name)
     end
     
-    def play(sound, channel_id_or_name = channel_id)
-      bot.play(sound, channel_id_or_name)
+    def play(sound, room_id_or_name = room_id)
+      bot.play(sound, room_id_or_name)
     end
   end
 end

@@ -5,8 +5,8 @@ describe Scamp do
     @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
     @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
     
-    # Stub fetch for channel data
-    @valid_channel_cache_data = {
+    # Stub fetch for room data
+    @valid_room_cache_data = {
       123 => {
         "id" => 123,
         "name" => "foo",
@@ -19,8 +19,8 @@ describe Scamp do
       }
     }
     
-    @valid_channel_cache_data.keys.each do |id|
-      json_response = Yajl::Encoder.encode(:room => @valid_channel_cache_data[id])
+    @valid_room_cache_data.keys.each do |id|
+      json_response = Yajl::Encoder.encode(:room => @valid_room_cache_data[id])
       stub_request(:get, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{id}.json").
         with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
         to_return(:status => 200, :body => json_response)
@@ -113,32 +113,32 @@ describe Scamp do
   describe "matching" do
     
     context "with conditions" do
-      it "should limit matches by channel id" do
+      it "should limit matches by room id" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
         
         bot = a Scamp
         bot.behaviour do
-          match("a string", :conditions => {:channel => 123}) {canary.lives}
-          match("a string", :conditions => {:channel => 456}) {canary.bang}
+          match("a string", :conditions => {:room => 123}) {canary.lives}
+          match("a string", :conditions => {:room => 456}) {canary.bang}
         end
         
         bot.send(:process_message, {:room_id => 123, :body => "a string"})
       end
       
-      it "should limit matches by channel name" do
+      it "should limit matches by room name" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
         
         bot = a Scamp
         bot.behaviour do
-          match("a string", :conditions => {:channel => "foo"}) {canary.lives}
-          match("a string", :conditions => {:channel => "bar"}) {canary.bang}
+          match("a string", :conditions => {:room => "foo"}) {canary.lives}
+          match("a string", :conditions => {:room => "bar"}) {canary.bang}
         end
         
-        bot.channel_cache = @valid_channel_cache_data
+        bot.room_cache = @valid_room_cache_data
         
         bot.send(:process_message, {:room_id => 123, :body => "a string"})
       end
@@ -173,18 +173,18 @@ describe Scamp do
         bot.send(:process_message, {:user_id => 123, :body => "a string"})
       end
       
-      it "should limit matches by channel and user" do
+      it "should limit matches by room and user" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
         
         bot = a Scamp
         bot.behaviour do
-          match("a string", :conditions => {:channel => 123, :user => 123}) {canary.lives}
-          match("a string", :conditions => {:channel => 456, :user => 456}) {canary.bang}
+          match("a string", :conditions => {:room => 123, :user => 123}) {canary.lives}
+          match("a string", :conditions => {:room => 456, :user => 456}) {canary.bang}
         end
         
-        bot.channel_cache = @valid_channel_cache_data
+        bot.room_cache = @valid_room_cache_data
         bot.user_cache = @valid_user_cache_data
         bot.send(:process_message, {:room_id => 123, :user_id => 123, :body => "a string"})
         bot.send(:process_message, {:room_id => 123, :user_id => 456, :body => "a string"})
@@ -314,20 +314,20 @@ describe Scamp do
   end
   
   describe "match block" do
-    it "should make the channel details available to the action block" do
+    it "should make the room details available to the action block" do
       canary = mock
       canary.expects(:id).with(123)
-      canary.expects(:name).with(@valid_channel_cache_data[123]["name"])
+      canary.expects(:name).with(@valid_room_cache_data[123]["name"])
       
       bot = a Scamp
       bot.behaviour do
         match("a string") {
-          canary.id(channel_id)
-          canary.name(channel)
+          canary.id(room_id)
+          canary.name(room)
         }
       end
       
-      bot.channel_cache = @valid_channel_cache_data
+      bot.room_cache = @valid_room_cache_data
       bot.send(:process_message, {:room_id => 123, :body => "a string"})
     end
     
@@ -364,21 +364,21 @@ describe Scamp do
     
     it "should provide a command list" do
       canary = mock
-      canary.expects(:commands).with([["Hello world", {}], ["Hello other world", {:channel=>123}], [/match me/, {:user=>123}]])
+      canary.expects(:commands).with([["Hello world", {}], ["Hello other world", {:room=>123}], [/match me/, {:user=>123}]])
       
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
           canary.commands(command_list)
         }
-        match("Hello other world", :conditions => {:channel => 123}) {}
+        match("Hello other world", :conditions => {:room => 123}) {}
         match(/match me/, :conditions => {:user => 123}) {}
       end
       
       bot.send(:process_message, {:body => "Hello world"})
     end
     
-    it "should be able to play a sound to the channel the action was triggered in" do
+    it "should be able to play a sound to the room the action was triggered in" do
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
@@ -398,19 +398,19 @@ describe Scamp do
       }
     end
     
-    it "should be able to play a sound to an arbitrary channel" do
-      play_channel = 456
+    it "should be able to play a sound to an arbitrary room" do
+      play_room = 456
       
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
-          play "yeah", play_channel
+          play "yeah", play_room
         }
       end
       
       EM.run_block {
         room_id = 123
-        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_channel}/speak.json").
+        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_room}/speak.json").
           with(
             :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"SoundMessage\"}}",
             :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
@@ -420,7 +420,7 @@ describe Scamp do
       }
     end
     
-    it "should be able to say a message to the channel the action was triggered in" do
+    it "should be able to say a message to the room the action was triggered in" do
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
@@ -440,19 +440,19 @@ describe Scamp do
       }
     end
     
-    it "should be able to say a message to an arbitrary channel" do
-      play_channel = 456
+    it "should be able to say a message to an arbitrary room" do
+      play_room = 456
       
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
-          say "yeah", play_channel
+          say "yeah", play_room
         }
       end
       
       EM.run_block {
         room_id = 123
-        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_channel}/speak.json").
+        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_room}/speak.json").
           with(
             :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"Textmessage\"}}",
             :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}

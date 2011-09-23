@@ -30,10 +30,10 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       end
       
       # 
-      # A special user and channel method is available in match blocks.
+      # A special user and room method is available in match blocks.
       # 
       match "a user said" do
-        say "#{user} said something in channel #{channel}"
+        say "#{user} said something in room #{room}"
       end
       
       match "Hello!" do
@@ -48,17 +48,17 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       end
       
       # 
-      # Limit the match to certain channels, users or both.
+      # Limit the match to certain rooms, users or both.
       # 
-      match /^Lets match (.+)$/, :conditions => {:channel => "Some Channel"} do
-        say "Only said if channel name mathces /someregex/"
+      match /^Lets match (.+)$/, :conditions => {:room => "Some Room"} do
+        say "Only said if room name mathces /someregex/"
       end
       
       match "some text", :conditions => {:user => "Some User"} do
         say "Only said if user name mathces /someregex/"
       end
       
-      match /some other text/, :conditions => {:user => "Some User", :channel => 123456} do
+      match /some other text/, :conditions => {:user => "Some User", :room => 123456} do
         say "You can mix conditions"
       end
       
@@ -70,13 +70,13 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       end
       
       # 
-      # You can say multiple times, and you can specify an alternate channel.
-      # Default behaviour is to 'say' in the channel that caused the match.
+      # You can say multiple times, and you can specify an alternate room.
+      # Default behaviour is to 'say' in the room that caused the match.
       # 
       match "something" do
-        say "#{user} said something in channel #{channel}"
-        say "#{user} said something in channel #{channel}", 237872
-        say "#{user} said something in channel #{channel}", "System Administration"
+        say "#{user} said something in room #{room}"
+        say "#{user} said something in room #{room}", 237872
+        say "#{user} said something in room #{room}", "System Administration"
       end
       
       # 
@@ -95,27 +95,27 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       end
     end
       
-    # Connect and join some channels
+    # Connect and join some rooms
     scamp.connect!([293788, "Monitoring"])
 
-In the channel/user conditions you can use the name, regex or ID of a user or channel, in say you can ise a string or ID, eg:
+In the room/user conditions you can use the name, regex or ID of a user or room, in say you can ise a string or ID, eg:
 
-    :conditions => {:channel => /someregex/}
-    :conditions => {:channel => "some string"}
-    :conditions => {:channel => 123456}
+    :conditions => {:room => /someregex/}
+    :conditions => {:room => "some string"}
+    :conditions => {:room => 123456}
 
     :conditions => {:user => /someregex/}
     :conditions => {:user => "some string"}
     :conditions => {:user => 123456}
 
-    say "#{user} said something in channel #{channel}", 237872
-    say "#{user} said something in channel #{channel}", "System Administration"
+    say "#{user} said something in room #{room}", 237872
+    say "#{user} said something in room #{room}", "System Administration"
 
 By default Scamp listens to itself. This could either be fun, or dangerous, you decide. You can turn this off by passing :first\_match\_only => true in the initialisation options
 
     scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :first_match_only => true)
 
-Scamp will listen to all messages that are sent on the channels it is listening on and doesn't need to be addressed by name. If you prefer to only trigger bot commands when you address your bot directly add the :required\_prefix initialisation option:
+Scamp will listen to all messages that are sent on the rooms it is listening on and doesn't need to be addressed by name. If you prefer to only trigger bot commands when you address your bot directly add the :required\_prefix initialisation option:
 
     scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :required_prefix => 'Bot: ')
 
@@ -124,7 +124,7 @@ Scamp will now require commands to begin with 'Bot: ' (or whatever you have spec
 ## TODO
 
 * Write more tests
-* Allow multiple values for conditions, eg: :conditions => {:channel => ["This channel", "Some channel"]}
+* Allow multiple values for conditions, eg: :conditions => {:room => ["This room", "Some room"]}
 * Add paste support
 
 ## Known issues
