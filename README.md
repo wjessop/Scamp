@@ -114,15 +114,13 @@ In the channel/user conditions you can use the name, regex or ID of a user or ch
 ## TODO
 
 * Write more tests
-* Allow multiple values for conditions, eg: :conditions => {:channel => [/someregex/, "Some channel"]}
-* Add paste/play support
+* Allow multiple values for conditions, eg: :conditions => {:channel => ["This channel", "Some channel"]}
+* Add paste support
 * Add option to stop bot responding to itself
 
 ## Known issues
 
-* Bot doesn't detect that it's been kicked out of a channel and reconnect
 * Bot tends to crash when it encounters an error.
-* When encountering a problem straming (Couldn't stream channel 401839 at url https://streaming.campfirenow.com/room/<channel_id>/live.json) no attempt is made to re-connect
 
 ## How to contribute
 
