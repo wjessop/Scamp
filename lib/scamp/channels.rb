@@ -5,14 +5,6 @@ class Scamp
     # SoundMessage (plays a sound as determined by the message, which can be either “rimshot”, “crickets”, or “trombone”),
     # TweetMessage (a Twitter status URL to be fetched and inserted into the chat)
     
-    #  curl -vvv -H 'Content-Type: application/json' -d '{"message":{"body":"Yeeeeeaaaaaahh", "type":"Textmessage"}}' -u API_KEY:X https://37s.campfirenow.com/room/293788/speak.json
-    def say(message, channel)
-      url = "https://#{subdomain}.campfirenow.com/room/#{channel_id(channel)}/speak.json"
-      http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}, :body => Yajl::Encoder.encode({:message => {:body => message, :type => "Textmessage"}})
-      
-      http.errback { logger.error "Error speaking: '#{message}' to #{channel_id(channel)}" }
-    end
-    
     def paste(text, channel)
     end
     

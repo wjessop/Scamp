@@ -27,6 +27,10 @@ class Scamp
       end if match.respond_to?(:names) # 1.8 doesn't support named captures
     end
     
+    def channel_id
+      @message[:room_id]
+    end
+    
     def channel
       bot.channel_name_for @message[:room_id]
     end
@@ -53,8 +57,12 @@ class Scamp
       bot.command_list
     end
     
-    def say(msg, channel_id_or_name = channel)
+    def say(msg, channel_id_or_name = channel_id)
       bot.say(msg, channel_id_or_name)
+    end
+    
+    def play(sound, channel_id_or_name = channel_id)
+      bot.play(sound, channel_id_or_name)
     end
   end
 end

@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec", "~> 2.6.0"
   s.add_development_dependency "mocha", "~> 0.10.0"
+  s.add_development_dependency "webmock", "~> 1.7.6"
 end

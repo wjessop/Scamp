@@ -9,11 +9,13 @@ require 'scamp/channels'
 require 'scamp/users'
 require 'scamp/matcher'
 require 'scamp/action'
+require 'scamp/messages'
 
 class Scamp
   include Connection
   include Channels
   include Users
+  include Messages
 
   attr_accessor :channels, :user_cache, :channel_cache, :matchers, :api_key, :subdomain,
                 :logger, :verbose, :first_match_only, :required_prefix, :channels_to_join

@@ -4,7 +4,27 @@ describe Scamp do
   before do
     @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
     @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
-    @valid_channel_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
+    
+    # Stub fetch for channel data
+    @valid_channel_cache_data = {
+      123 => {
+        "id" => 123,
+        "name" => "foo",
+        "users" => []
+      },
+      456 => {
+        "id" => 456,
+        "name" => "bar",
+        "users" => []
+      }
+    }
+    
+    @valid_channel_cache_data.keys.each do |id|
+      json_response = Yajl::Encoder.encode(:room => @valid_channel_cache_data[id])
+      stub_request(:get, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{id}.json").
+        with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
+        to_return(:status => 200, :body => json_response)
+    end
   end
   
   describe "#initialize" do
@@ -290,6 +310,156 @@ describe Scamp do
         bot.send(:process_message, {:body => "bot: a string"})
         bot.send(:process_message, {:body => "Bot: a string oh my!"})
       end
+    end
+  end
+  
+  describe "match block" do
+    it "should make the channel details available to the action block" do
+      canary = mock
+      canary.expects(:id).with(123)
+      canary.expects(:name).with(@valid_channel_cache_data[123]["name"])
+      
+      bot = a Scamp
+      bot.behaviour do
+        match("a string") {
+          canary.id(channel_id)
+          canary.name(channel)
+        }
+      end
+      
+      bot.channel_cache = @valid_channel_cache_data
+      bot.send(:process_message, {:room_id => 123, :body => "a string"})
+    end
+    
+    it "should make the speaking user details available to the action block" do
+      canary = mock
+      canary.expects(:id).with(123)
+      canary.expects(:name).with(@valid_user_cache_data[123]["name"])
+      
+      bot = a Scamp
+      bot.behaviour do
+        match("a string") {
+          canary.id(user_id)
+          canary.name(user)
+        }
+      end
+      
+      bot.user_cache = @valid_user_cache_data
+      bot.send(:process_message, {:user_id => 123, :body => "a string"})
+    end
+    
+    it "should make the message said available to the action block" do
+      canary = mock
+      canary.expects(:message).with("Hello world")
+      
+      bot = a Scamp
+      bot.behaviour do
+        match("Hello world") {
+          canary.message(message)
+        }
+      end
+      
+      bot.send(:process_message, {:body => "Hello world"})
+    end
+    
+    it "should provide a command list" do
+      canary = mock
+      canary.expects(:commands).with([["Hello world", {}], ["Hello other world", {:channel=>123}], [/match me/, {:user=>123}]])
+      
+      bot = a Scamp
+      bot.behaviour do
+        match("Hello world") {
+          canary.commands(command_list)
+        }
+        match("Hello other world", :conditions => {:channel => 123}) {}
+        match(/match me/, :conditions => {:user => 123}) {}
+      end
+      
+      bot.send(:process_message, {:body => "Hello world"})
+    end
+    
+    it "should be able to play a sound to the channel the action was triggered in" do
+      bot = a Scamp
+      bot.behaviour do
+        match("Hello world") {
+          play "yeah"
+        }
+      end
+      
+      EM.run_block {
+        room_id = 123
+        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{room_id}/speak.json").
+          with(
+            :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"SoundMessage\"}}",
+            :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
+          )
+            
+        bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
+      }
+    end
+    
+    it "should be able to play a sound to an arbitrary channel" do
+      play_channel = 456
+      
+      bot = a Scamp
+      bot.behaviour do
+        match("Hello world") {
+          play "yeah", play_channel
+        }
+      end
+      
+      EM.run_block {
+        room_id = 123
+        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_channel}/speak.json").
+          with(
+            :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"SoundMessage\"}}",
+            :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
+          )
+            
+        bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
+      }
+    end
+    
+    it "should be able to say a message to the channel the action was triggered in" do
+      bot = a Scamp
+      bot.behaviour do
+        match("Hello world") {
+          say "yeah"
+        }
+      end
+      
+      EM.run_block {
+        room_id = 123
+        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{room_id}/speak.json").
+          with(
+            :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"Textmessage\"}}",
+            :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
+          )
+            
+        bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
+      }
+    end
+    
+    it "should be able to say a message to an arbitrary channel" do
+      play_channel = 456
+      
+      bot = a Scamp
+      bot.behaviour do
+        match("Hello world") {
+          say "yeah", play_channel
+        }
+      end
+      
+      EM.run_block {
+        room_id = 123
+        stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_channel}/speak.json").
+          with(
+            :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"Textmessage\"}}",
+            :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
+          )
+            
+        bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
+      }
     end
   end
 
