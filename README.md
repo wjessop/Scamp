@@ -2,6 +2,8 @@
 
 A framework for writing [Campfire](http://campfirenow.com/) bots. Scamp is in early development so use it at your own risk, pull requests welcome.
 
+Scamp is designed to be simple, to get out of your way and to let you do what you want. It doesn't have any baggage, so no administration web interfaces, no built in commands. It's a blank slate for you to build on.
+
 ## Requirements
 
 Ruby >= 1.9.2 (At least for the named captures)
