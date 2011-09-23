@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Scamp::VERSION
   s.authors     = ["Will Jessop"]
   s.email       = ["will@willj.net"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/wjessop/Scamp"
   s.summary     = %q{Eventmachine based Campfire bot framework}
   s.description = %q{Eventmachine based Campfire bot framework}
 
