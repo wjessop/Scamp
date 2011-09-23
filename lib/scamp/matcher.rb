@@ -68,7 +68,7 @@ class Scamp
     def conditions_satisfied_by(msg)
       bot.logger.debug "Checking message against #{conditions.inspect}"
       
-      # item will be :nick or :channel
+      # item will be :user or :channel
       # cond is the int or string value.
       conditions.each do |item, cond|
         bot.logger.debug "Checking #{item} against #{cond}"

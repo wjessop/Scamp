@@ -62,7 +62,7 @@ scamp.behaviour do
      play "drama"
    end
    
-   match "multi-condition match", :conditions => {:channel => [401839, "Monitoring"], :nick => ["Will Jessop", "Noah Lorang"]} do
+   match "multi-condition match", :conditions => {:channel => [401839, "Monitoring"], :user => ["Will Jessop", "Noah Lorang"]} do
      # Reply in the current channel
      say "multi-condition match"
    end

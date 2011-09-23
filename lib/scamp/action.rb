@@ -1,6 +1,6 @@
 #
 # Actions are run in the context of a Scamp::Action.
-# This allows us to make channel, nick etc. methods
+# This allows us to make channel, user etc. methods
 # available on a per-message basis
 #
 
