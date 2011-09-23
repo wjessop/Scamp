@@ -126,7 +126,6 @@ Scamp will now require commands to begin with 'Bot: ' (or whatever you have spec
 * Write more tests
 * Allow multiple values for conditions, eg: :conditions => {:channel => ["This channel", "Some channel"]}
 * Add paste support
-* Add option to stop bot responding to itself
 
 ## Known issues
 
