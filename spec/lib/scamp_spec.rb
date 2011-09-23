@@ -22,7 +22,7 @@ describe Scamp do
     @valid_room_cache_data.keys.each do |id|
       json_response = Yajl::Encoder.encode(:room => @valid_room_cache_data[id])
       stub_request(:get, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{id}.json").
-        with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
+        with(:headers => {'Authorizations'=>[@valid_params[:api_key], 'X']}).
         to_return(:status => 200, :body => json_response)
     end
   end
@@ -460,6 +460,181 @@ describe Scamp do
             
         bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
       }
+    end
+  end
+
+  describe "API" do
+    context "user operations" do
+      it "should fetch user data" do
+        bot = a Scamp
+        
+        EM.run_block {
+          stub_request(:get, "https://#{@valid_params[:subdomain]}.campfirenow.com/users/123.json").
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
+            to_return(:status => 200, :body => Yajl::Encoder.encode(:user => @valid_user_cache_data[123]), :headers => {})
+          bot.username_for(123)
+        }
+      end
+      
+      it "should handle HTTP errors fetching user data" do
+        mock_logger
+        bot = a Scamp
+
+        url = "https://#{@valid_params[:subdomain]}.campfirenow.com/users/123.json"
+        EM.run_block {
+          stub_request(:get, url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
+            to_return(:status => 502, :body => "", :headers => {'Content-Type'=>'text/html'})
+          lambda {bot.username_for(123)}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't fetch user data for user 123 with url #{url}, http response from API was 502/
+      end
+      
+      it "should handle network errors fetching user data" do
+        mock_logger
+        bot = a Scamp
+        
+        url = "https://#{@valid_params[:subdomain]}.campfirenow.com/users/123.json"
+        EM.run_block {
+          stub_request(:get, url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).to_timeout
+          lambda {bot.username_for(123)}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't connect to #{url} to fetch user data for user 123/
+      end
+    end
+    
+    context "room operations" do
+      before do
+        @room_list_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/rooms.json"
+        @room_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/room/123.json"
+        @stream_url = "https://streaming.campfirenow.com/room/123/live.json"
+      end
+      
+      it "should fetch a room list" do
+        mock_logger
+        bot = a Scamp
+        
+        EM.run_block {
+          stub_request(:get, @room_list_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
+            to_return(:status => 200, :body => Yajl::Encoder.encode(:rooms => @valid_room_cache_data.values), :headers => {})
+          bot.send(:populate_room_list)
+        }
+        logger_output.should =~ /DEBUG.*Fetched room list/
+      end
+      
+      it "should handle HTTP errors fetching the room list" do
+        mock_logger
+        bot = a Scamp
+      
+        EM.run_block {
+          # stub_request(:get, url).
+          #   with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
+          #   to_return(:status => 502, :body => "", :headers => {'Content-Type'=>'text/html'})
+          stub_request(:get, @room_list_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
+            to_return(:status => 502, :body => "", :headers => {'Content-Type'=>'text/html'})
+          lambda {bot.send(:populate_room_list)}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't fetch room list with url #{@room_list_url}, http response from API was 502/
+      end
+      
+      it "should handle network errors fetching the room list" do
+        mock_logger
+        bot = a Scamp
+        EM.run_block {
+          stub_request(:get, @room_list_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).to_timeout
+          lambda {bot.send(:populate_room_list)}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't connect to url #{@room_list_url} to fetch room list/
+      end
+      
+      it "should fetch individual room data" do
+        mock_logger
+        bot = a Scamp
+        
+        EM.run_block {
+          stub_request(:get, @room_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
+            to_return(:status => 200, :body => Yajl::Encoder.encode(:room => @valid_room_cache_data[123]), :headers => {})
+          bot.room_name_for(123)
+        }
+        logger_output.should =~ /DEBUG.*Fetched room data for 123/
+      end
+      
+      it "should handle HTTP errors fetching individual room data" do
+        mock_logger
+        bot = a Scamp
+
+        EM.run_block {
+          stub_request(:get, @room_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
+            to_return(:status => 502, :body => "", :headers => {'Content-Type'=>'text/html'})
+          lambda {bot.room_name_for(123)}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't fetch room data for room 123 with url #{@room_url}, http response from API was 502/
+      end
+      
+      it "should handle network errors fetching individual room data" do
+        mock_logger
+        bot = a Scamp
+        
+        EM.run_block {
+          stub_request(:get, @room_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).to_timeout
+          lambda {bot.room_name_for(123)}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't connect to #{@room_url} to fetch room data for room 123/
+      end
+      
+      it "should stream a room"
+      it "should handle HTTP errors streaming a room"
+      it "should handle network errors streaming a room"
+    end
+    
+    context "message operations" do
+      before do
+        @message_post_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/room/123/speak.json"
+      end
+      it "should send a message" do
+        mock_logger
+        bot = a Scamp
+        
+        EM.run_block {
+          stub_request(:post, @message_post_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).
+            to_return(:status => 200, :body => Yajl::Encoder.encode(:room => @valid_room_cache_data[123]), :headers => {})
+          bot.send(:send_message, 123, "Hi", "Textmessage")
+        }
+        logger_output.should =~ /DEBUG.*Posted message "Hi" to room 123/
+      end
+      
+      it "should handle HTTP errors fetching individual room data" do
+        mock_logger
+        bot = a Scamp
+
+        EM.run_block {
+          stub_request(:post, @message_post_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).
+            to_return(:status => 502, :body => "", :headers => {'Content-Type'=>'text/html'})
+          lambda {bot.send(:send_message, 123, "Hi", "Textmessage")}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't post message "Hi" to room 123 using url #{@message_post_url}, http response from the API was 502/
+      end
+      
+      it "should handle network errors fetching individual room data" do
+        mock_logger
+        bot = a Scamp
+        
+        EM.run_block {
+          stub_request(:post, @message_post_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).to_timeout
+          lambda {bot.send(:send_message, 123, "Hi", "Textmessage")}.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't connect to #{@message_post_url} to post message "Hi" to room 123/
+      end
     end
   end
 

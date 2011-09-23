@@ -47,32 +47,40 @@ class Scamp
     def populate_room_list
       url = "https://#{subdomain}.campfirenow.com/rooms.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
-      http.errback { logger.error "Error populating the room list: #{http.status.inspect}" }
+      http.errback { logger.error "Couldn't connect to url #{url} to fetch room list" }
       http.callback {
-        new_rooms = {}
-        Yajl::Parser.parse(http.response)['rooms'].each do |c|
-          new_rooms[c["name"]] = c
+        if http.response_header.status == 200
+          logger.debug "Fetched room list"
+          new_rooms = {}
+          Yajl::Parser.parse(http.response)['rooms'].each do |c|
+            new_rooms[c["name"]] = c
+          end
+          # No idea why using the "rooms" accessor here doesn't
+          # work but accessing the ivar directly does. There's
+          # Probably a bug.
+          @rooms = new_rooms # replace existing room list
+          yield if block_given?
+        else
+          logger.error "Couldn't fetch room list with url #{url}, http response from API was #{http.response_header.status}"
         end
-        # No idea why using the "rooms" accessor here doesn't
-        # work but accessing the ivar directly does. There's
-        # Probably a bug.
-        @rooms = new_rooms # replace existing room list
-        yield if block_given?
       }
     end
 
     def fetch_room_data(room_id)
-      logger.debug "Fetching room data for #{room_id}"
       url = "https://#{subdomain}.campfirenow.com/room/#{room_id}.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
-      http.errback { logger.error "Couldn't get data for room #{room_id} at url #{url}" }
+      http.errback { logger.error "Couldn't connect to #{url} to fetch room data for room #{room_id}" }
       http.callback {
-        logger.debug "Fetched room data for #{room_id}"
-        room = Yajl::Parser.parse(http.response)['room']
-        room_cache[room["id"]] = room
+        if http.response_header.status == 200
+          logger.debug "Fetched room data for #{room_id}"
+          room = Yajl::Parser.parse(http.response)['room']
+          room_cache[room["id"]] = room
 
-        room['users'].each do |u|
-          update_user_cache_with(u["id"], u)
+          room['users'].each do |u|
+            update_user_cache_with(u["id"], u)
+          end
+        else
+          logger.error "Couldn't fetch room data for room #{room_id} with url #{url}, http response from API was #{http.response_header.status}"
         end
       }
     end
