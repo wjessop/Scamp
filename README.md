@@ -39,6 +39,13 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       end
       
       # 
+      # You can play awesome sounds
+      # 
+      match "ohmy" do
+        play "yeah"
+      end
+      
+      # 
       # Limit the match to certain channels, users or both.
       # 
       match /^Lets match (.+)$/, :conditions => {:channel => "Some Channel"} do

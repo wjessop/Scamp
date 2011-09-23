@@ -56,6 +56,12 @@ scamp.behaviour do
      say "#{user} said something in channel #{channel}"
    end
    
+   # Play some sounds
+   match "ohmy" do
+     play "yeah"
+     play "drama"
+   end
+   
    match "multi-condition match", :conditions => {:channel => [401839, "Monitoring"], :nick => ["Will Jessop", "Noah Lorang"]} do
      # Reply in the current channel
      say "multi-condition match"
