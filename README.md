@@ -115,6 +115,12 @@ By default Scamp listens to itself. This could either be fun, or dangerous, you 
 
     scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :first_match_only => true)
 
+Scamp will listen to all messages that are sent on the channels it is listening on and doesn't need to be addressed by name. If you prefer to only trigger bot commands when you address your bot directly add the :required\_prefix initialisation option:
+
+    scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :required_prefix => 'Bot: ')
+
+Scamp will now require commands to begin with 'Bot: ' (or whatever you have specified), and will strip out this prefix before handing the message onto your match block.
+
 ## TODO
 
 * Write more tests
