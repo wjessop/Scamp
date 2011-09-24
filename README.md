@@ -4,6 +4,8 @@ A framework for writing [Campfire](http://campfirenow.com/) bots. Scamp is in ea
 
 Scamp is designed to be simple, to get out of your way and to let you do what you want. It doesn't have any baggage, so no administration web interfaces, no built in commands. It's a blank slate for you to build on.
 
+If you like or use Scamp I'd love to hear from you. Drop me at line at will at 37signals dot com and tell me how you are using it.
+
 ## Requirements
 
 Ruby >= 1.9.2 (At least for the named captures)
@@ -140,6 +142,13 @@ Here's the most direct way to get your work merged into the project:
 8. Send a pull request for your branch
 
 Take a look at the TODO list or known issues for some inspiration if you need it.
+
+## Thanks
+
+First class support, commits and pull requests, thanks guys!
+
+* [Caius Durling](http://caius.name/)
+* Sudara Williams of [Ramen Music](http://ramenmusic.com)
 
 ## License
 
