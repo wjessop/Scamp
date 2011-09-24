@@ -123,13 +123,8 @@ Scamp will now require commands to begin with 'Bot: ' (or whatever you have spec
 
 ## TODO
 
-* Write more tests
 * Allow multiple values for conditions, eg: :conditions => {:room => ["This room", "Some room"]}
 * Add paste support
-
-## Known issues
-
-* Bot tends to crash when it encounters an error.
 
 ## How to contribute
 
