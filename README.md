@@ -102,11 +102,9 @@ Matchers are tested in order and all that satisfy the match and conditions will 
 
 In the room/user conditions and say/play commands you can use the name or ID of a user or room, eg:
 
-    :conditions => {:room => /someregex/}
     :conditions => {:room => "some string"}
     :conditions => {:room => 123456}
 
-    :conditions => {:user => /someregex/}
     :conditions => {:user => "some string"}
     :conditions => {:user => 123456}
 
