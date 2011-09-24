@@ -4,18 +4,18 @@ class Scamp
     # PasteMessage (pre-formatted message, rendered in a fixed-width font),
     # SoundMessage (plays a sound as determined by the message, which can be either “rimshot”, “crickets”, or “trombone”),
     # TweetMessage (a Twitter status URL to be fetched and inserted into the chat)
-    
+
     def paste(text, room)
     end
-    
+
     def upload
     end
-    
+
     def join(room_id)
       logger.info "Joining room #{room_id}"
       url = "https://#{subdomain}.campfirenow.com/room/#{room_id}/join.json"
       http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}
-      
+
       http.errback { logger.error "Error joining room: #{room_id}" }
       http.callback {
         yield if block_given?
@@ -29,21 +29,21 @@ class Scamp
         return room_id_from_room_name(room_id_or_name)
       end
     end
-    
+
     def room_name_for(room_id)
       data = room_cache_data(room_id)
       return data["name"] if data
       room_id.to_s
     end
-    
+
     private
-    
+
     def room_cache_data(room_id)
       return room_cache[room_id] if room_cache.has_key? room_id
       fetch_room_data(room_id)
       return false
     end
-    
+
     def populate_room_list
       url = "https://#{subdomain}.campfirenow.com/rooms.json"
       http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X']}
@@ -84,7 +84,7 @@ class Scamp
         end
       }
     end
-    
+
     def join_and_stream(id)
       join(id) do
         logger.info "Joined room #{id} successfully"
@@ -92,11 +92,11 @@ class Scamp
         stream(id)
       end
     end
-    
+
     def stream(room_id)
       json_parser = Yajl::Parser.new :symbolize_keys => true
       json_parser.on_parse_complete = method(:process_message)
-      
+
       url = "https://streaming.campfirenow.com/room/#{room_id}/live.json"
       # Timeout per https://github.com/igrigorik/em-http-request/wiki/Redirects-and-Timeouts
       http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 0).get :head => {'authorization' => [api_key, 'X']}

@@ -2,9 +2,9 @@ require "spec_helper"
 
 describe Scamp do
   before do
-    @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
+    @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"}
     @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
-    
+
     # Stub fetch for room data
     @valid_room_cache_data = {
       123 => {
@@ -19,7 +19,7 @@ describe Scamp do
       }
     }
   end
-  
+
   describe "#initialize" do
     it "should work with valid params" do
       a(Scamp).should be_a(Scamp)
@@ -102,81 +102,81 @@ describe Scamp do
       end
     end
   end
-  
+
   describe "matching" do
-    
+
     context "with conditions" do
       it "should limit matches by room id" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
-        
+
         bot = a Scamp
         bot.behaviour do
           match("a string", :conditions => {:room => 123}) {canary.lives}
           match("a string", :conditions => {:room => 456}) {canary.bang}
         end
-        
+
         bot.send(:process_message, {:room_id => 123, :body => "a string"})
       end
-      
+
       it "should limit matches by room name" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
-        
+
         bot = a Scamp
         bot.behaviour do
           match("a string", :conditions => {:room => "foo"}) {canary.lives}
           match("a string", :conditions => {:room => "bar"}) {canary.bang}
         end
-        
+
         bot.room_cache = @valid_room_cache_data
-        
+
         bot.send(:process_message, {:room_id => 123, :body => "a string"})
       end
-      
+
       it "should limit matches by user id" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
-        
+
         bot = a Scamp
         bot.behaviour do
           match("a string", :conditions => {:user => 123}) {canary.lives}
           match("a string", :conditions => {:user => 456}) {canary.bang}
         end
-        
+
         bot.send(:process_message, {:user_id => 123, :body => "a string"})
       end
-      
+
       it "should limit matches by user name" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
-        
+
         bot = a Scamp
         bot.behaviour do
           match("a string", :conditions => {:user => "foo"}) {canary.lives}
           match("a string", :conditions => {:user => "bar"}) {canary.bang}
         end
-        
+
         bot.user_cache = @valid_user_cache_data
-        
+
         bot.send(:process_message, {:user_id => 123, :body => "a string"})
       end
-      
+
       it "should limit matches by room and user" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
-        
+
         bot = a Scamp
         bot.behaviour do
           match("a string", :conditions => {:room => 123, :user => 123}) {canary.lives}
           match("a string", :conditions => {:room => 456, :user => 456}) {canary.bang}
         end
-        
+
         bot.room_cache = @valid_room_cache_data
         bot.user_cache = @valid_user_cache_data
         bot.send(:process_message, {:room_id => 123, :user_id => 123, :body => "a string"})
@@ -184,70 +184,70 @@ describe Scamp do
         bot.send(:process_message, {:room_id => 456, :user_id => 123, :body => "a string"})
       end
     end
-    
+
     describe "strings" do
       it "should match an exact string" do
         canary = mock
         canary.expects(:lives).once
         canary.expects(:bang).never
-        
+
         bot = a Scamp
         bot.behaviour do
           match("a string") {canary.lives}
           match("another string") {canary.bang}
           match("a string like no other") {canary.bang}
         end
-        
+
         bot.send(:process_message, {:body => "a string"})
       end
-      
+
       it "should not match without prefix when required_prefix is true" do
         canary = mock
         canary.expects(:bang).never
-        
+
         bot = a Scamp, :required_prefix => 'Bot: '
         bot.behaviour do
           match("a string") {canary.bang}
         end
-        
+
         bot.send(:process_message, {:body => "a string"})
       end
 
       it "should match with exact prefix when required_prefix is true" do
         canary = mock
         canary.expects(:lives).once
-        
+
         bot = a Scamp, :required_prefix => 'Bot: '
         bot.behaviour do
           match("a string") {canary.lives}
         end
-        
+
         bot.send(:process_message, {:body => "Bot: a string"})
       end
     end
-    
+
 
     describe "regexes" do
       it "should match a regex" do
         canary = mock
         canary.expects(:ping).twice
-        
+
         bot = a Scamp
         bot.behaviour do
           match /foo/ do
             canary.ping
           end
         end
-        
+
         bot.send(:process_message, {:body => "something foo other thing"})
         bot.send(:process_message, {:body => "foomaster"})
       end
-      
+
       it "should make named captures vailable as methods" do
         canary = mock
         canary.expects(:one).with("first")
         canary.expects(:two).with("the rest of it")
-        
+
         bot = a Scamp
         bot.behaviour do
           match /^please match (?<yousaidthis>\w+) and (?<andthis>.+)$/ do
@@ -255,15 +255,15 @@ describe Scamp do
             canary.two(andthis)
           end
         end
-        
+
         bot.send(:process_message, {:body => "please match first and the rest of it"})
       end
-      
+
       it "should make matches available in an array" do
         canary = mock
         canary.expects(:one).with("first")
         canary.expects(:two).with("the rest of it")
-        
+
         bot = a Scamp
         bot.behaviour do
           match /^please match (\w+) and (.+)$/ do
@@ -271,19 +271,19 @@ describe Scamp do
             canary.two(matches[1])
           end
         end
-        
+
         bot.send(:process_message, {:body => "please match first and the rest of it"})
       end
-      
+
       it "should not match without prefix when required_prefix is present" do
         canary = mock
         canary.expects(:bang).never
-        
+
         bot = a Scamp, :required_prefix => /^Bot[\:,\s]+/i
         bot.behaviour do
           match(/a string/) {canary.bang}
         end
-        
+
         bot.send(:process_message, {:body => "a string"})
         bot.send(:process_message, {:body => "some kind of a string"})
         bot.send(:process_message, {:body => "a string!!!"})
@@ -292,12 +292,12 @@ describe Scamp do
       it "should match with regex prefix when required_prefix is present" do
         canary = mock
         canary.expects(:lives).times(4)
-        
+
         bot = a Scamp, :required_prefix => /^Bot\W{1,2}/i
         bot.behaviour do
           match(/a string/) {canary.lives}
         end
-        
+
         bot.send(:process_message, {:body => "Bot, a string"})
         bot.send(:process_message, {:body => "Bot a string"})
         bot.send(:process_message, {:body => "bot: a string"})
@@ -305,13 +305,13 @@ describe Scamp do
       end
     end
   end
-  
+
   describe "match block" do
     it "should make the room details available to the action block" do
       canary = mock
       canary.expects(:id).with(123)
       canary.expects(:name).with(@valid_room_cache_data[123]["name"])
-      
+
       bot = a Scamp
       bot.behaviour do
         match("a string") {
@@ -319,16 +319,16 @@ describe Scamp do
           canary.name(room)
         }
       end
-      
+
       bot.room_cache = @valid_room_cache_data
       bot.send(:process_message, {:room_id => 123, :body => "a string"})
     end
-    
+
     it "should make the speaking user details available to the action block" do
       canary = mock
       canary.expects(:id).with(123)
       canary.expects(:name).with(@valid_user_cache_data[123]["name"])
-      
+
       bot = a Scamp
       bot.behaviour do
         match("a string") {
@@ -336,29 +336,29 @@ describe Scamp do
           canary.name(user)
         }
       end
-      
+
       bot.user_cache = @valid_user_cache_data
       bot.send(:process_message, {:user_id => 123, :body => "a string"})
     end
-    
+
     it "should make the message said available to the action block" do
       canary = mock
       canary.expects(:message).with("Hello world")
-      
+
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
           canary.message(message)
         }
       end
-      
+
       bot.send(:process_message, {:body => "Hello world"})
     end
-    
+
     it "should provide a command list" do
       canary = mock
       canary.expects(:commands).with([["Hello world", {}], ["Hello other world", {:room=>123}], [/match me/, {:user=>123}]])
-      
+
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
@@ -367,10 +367,10 @@ describe Scamp do
         match("Hello other world", :conditions => {:room => 123}) {}
         match(/match me/, :conditions => {:user => 123}) {}
       end
-      
+
       bot.send(:process_message, {:body => "Hello world"})
     end
-    
+
     it "should be able to play a sound to the room the action was triggered in" do
       bot = a Scamp
       bot.behaviour do
@@ -378,7 +378,7 @@ describe Scamp do
           play "yeah"
         }
       end
-      
+
       EM.run_block {
         room_id = 123
         stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{room_id}/speak.json").
@@ -386,21 +386,21 @@ describe Scamp do
             :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"SoundMessage\"}}",
             :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
           )
-            
+
         bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
       }
     end
-    
+
     it "should be able to play a sound to an arbitrary room" do
       play_room = 456
-      
+
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
           play "yeah", play_room
         }
       end
-      
+
       EM.run_block {
         room_id = 123
         stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_room}/speak.json").
@@ -408,11 +408,11 @@ describe Scamp do
             :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"SoundMessage\"}}",
             :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
           )
-            
+
         bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
       }
     end
-    
+
     it "should be able to say a message to the room the action was triggered in" do
       bot = a Scamp
       bot.behaviour do
@@ -420,7 +420,7 @@ describe Scamp do
           say "yeah"
         }
       end
-      
+
       EM.run_block {
         room_id = 123
         stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{room_id}/speak.json").
@@ -428,21 +428,21 @@ describe Scamp do
             :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"Textmessage\"}}",
             :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
           )
-            
+
         bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
       }
     end
-    
+
     it "should be able to say a message to an arbitrary room" do
       play_room = 456
-      
+
       bot = a Scamp
       bot.behaviour do
         match("Hello world") {
           say "yeah", play_room
         }
       end
-      
+
       EM.run_block {
         room_id = 123
         stub_request(:post, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{play_room}/speak.json").
@@ -450,7 +450,7 @@ describe Scamp do
             :body => "{\"message\":{\"body\":\"yeah\",\"type\":\"Textmessage\"}}",
             :headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}
           )
-            
+
         bot.send(:process_message, {:room_id => room_id, :body => "Hello world"})
       }
     end
@@ -460,7 +460,7 @@ describe Scamp do
     context "user operations" do
       it "should fetch user data" do
         bot = a Scamp
-        
+
         EM.run_block {
           stub_request(:get, "https://#{@valid_params[:subdomain]}.campfirenow.com/users/123.json").
             with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
@@ -468,7 +468,7 @@ describe Scamp do
           bot.username_for(123)
         }
       end
-      
+
       it "should handle HTTP errors fetching user data" do
         mock_logger
         bot = a Scamp
@@ -482,11 +482,11 @@ describe Scamp do
         }
         logger_output.should =~ /ERROR.*Couldn't fetch user data for user 123 with url #{url}, http response from API was 502/
       end
-      
+
       it "should handle network errors fetching user data" do
         mock_logger
         bot = a Scamp
-        
+
         url = "https://#{@valid_params[:subdomain]}.campfirenow.com/users/123.json"
         EM.run_block {
           stub_request(:get, url).
@@ -496,18 +496,18 @@ describe Scamp do
         logger_output.should =~ /ERROR.*Couldn't connect to #{url} to fetch user data for user 123/
       end
     end
-    
+
     context "room operations" do
       before do
         @room_list_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/rooms.json"
         @room_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/room/123.json"
         @stream_url = "https://streaming.campfirenow.com/room/123/live.json"
       end
-      
+
       it "should fetch a room list" do
         mock_logger
         bot = a Scamp
-        
+
         EM.run_block {
           stub_request(:get, @room_list_url).
             with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
@@ -516,11 +516,11 @@ describe Scamp do
         }
         logger_output.should =~ /DEBUG.*Fetched room list/
       end
-      
+
       it "should handle HTTP errors fetching the room list" do
         mock_logger
         bot = a Scamp
-      
+
         EM.run_block {
           # stub_request(:get, url).
           #   with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
@@ -532,7 +532,7 @@ describe Scamp do
         }
         logger_output.should =~ /ERROR.*Couldn't fetch room list with url #{@room_list_url}, http response from API was 502/
       end
-      
+
       it "should handle network errors fetching the room list" do
         mock_logger
         bot = a Scamp
@@ -543,11 +543,11 @@ describe Scamp do
         }
         logger_output.should =~ /ERROR.*Couldn't connect to url #{@room_list_url} to fetch room list/
       end
-      
+
       it "should fetch individual room data" do
         mock_logger
         bot = a Scamp
-        
+
         EM.run_block {
           stub_request(:get, @room_url).
             with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
@@ -556,7 +556,7 @@ describe Scamp do
         }
         logger_output.should =~ /DEBUG.*Fetched room data for 123/
       end
-      
+
       it "should handle HTTP errors fetching individual room data" do
         mock_logger
         bot = a Scamp
@@ -569,11 +569,11 @@ describe Scamp do
         }
         logger_output.should =~ /ERROR.*Couldn't fetch room data for room 123 with url #{@room_url}, http response from API was 502/
       end
-      
+
       it "should handle network errors fetching individual room data" do
         mock_logger
         bot = a Scamp
-        
+
         EM.run_block {
           stub_request(:get, @room_url).
             with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).to_timeout
@@ -581,12 +581,12 @@ describe Scamp do
         }
         logger_output.should =~ /ERROR.*Couldn't connect to #{@room_url} to fetch room data for room 123/
       end
-      
+
       it "should stream a room"
       it "should handle HTTP errors streaming a room"
       it "should handle network errors streaming a room"
     end
-    
+
     context "message operations" do
       before do
         @message_post_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/room/123/speak.json"
@@ -594,7 +594,7 @@ describe Scamp do
       it "should send a message" do
         mock_logger
         bot = a Scamp
-        
+
         EM.run_block {
           stub_request(:post, @message_post_url).
             with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).
@@ -603,7 +603,7 @@ describe Scamp do
         }
         logger_output.should =~ /DEBUG.*Posted message "Hi" to room 123/
       end
-      
+
       it "should handle HTTP errors fetching individual room data" do
         mock_logger
         bot = a Scamp
@@ -616,11 +616,11 @@ describe Scamp do
         }
         logger_output.should =~ /ERROR.*Couldn't post message "Hi" to room 123 using url #{@message_post_url}, http response from the API was 502/
       end
-      
+
       it "should handle network errors fetching individual room data" do
         mock_logger
         bot = a Scamp
-        
+
         EM.run_block {
           stub_request(:post, @message_post_url).
             with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).to_timeout
