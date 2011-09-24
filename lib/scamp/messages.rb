@@ -19,7 +19,7 @@ class Scamp
       http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}, :body => Yajl::Encoder.encode({:message => {:body => payload, :type => type}})
       http.errback { logger.error "Couldn't connect to #{url} to post message \"#{payload}\" to room #{room_id}" }
       http.callback {
-        if http.response_header.status == 200
+        if [200,201].include? http.response_header.status
           logger.debug "Posted message \"#{payload}\" to room #{room_id}"
         else
           logger.error "Couldn't post message \"#{payload}\" to room #{room_id} using url #{url}, http response from the API was #{http.response_header.status}"
