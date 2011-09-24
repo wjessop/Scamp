@@ -18,13 +18,6 @@ describe Scamp do
         "users" => []
       }
     }
-    
-    @valid_room_cache_data.keys.each do |id|
-      json_response = Yajl::Encoder.encode(:room => @valid_room_cache_data[id])
-      stub_request(:get, "https://#{@valid_params[:subdomain]}.campfirenow.com/room/#{id}.json").
-        with(:headers => {'Authorizations'=>[@valid_params[:api_key], 'X']}).
-        to_return(:status => 200, :body => json_response)
-    end
   end
   
   describe "#initialize" do
