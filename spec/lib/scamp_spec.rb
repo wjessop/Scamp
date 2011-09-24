@@ -598,7 +598,7 @@ describe Scamp do
         EM.run_block {
           stub_request(:post, @message_post_url).
             with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).
-            to_return(:status => 200, :body => Yajl::Encoder.encode(:room => @valid_room_cache_data[123]), :headers => {})
+            to_return(:status => 201, :body => Yajl::Encoder.encode(:room => @valid_room_cache_data[123]), :headers => {})
           bot.send(:send_message, 123, "Hi", "Textmessage")
         }
         logger_output.should =~ /DEBUG.*Posted message "Hi" to room 123/
