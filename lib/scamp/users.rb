@@ -7,9 +7,9 @@ class Scamp
       fetch_data_for(user_id)
       return user_id.to_s
     end
-    
+
     private
-    
+
     def fetch_data_for(user_id)
       url = "https://#{subdomain}.campfirenow.com/users/#{user_id}.json"
       http = EventMachine::HttpRequest.new(url).get(:head => {'authorization' => [api_key, 'X'], "Content-Type" => "application/json"})
@@ -25,7 +25,7 @@ class Scamp
         logger.error "Couldn't connect to #{url} to fetch user data for user #{user_id}"
       end
     end
-    
+
     def update_user_cache_with(user_id, data)
       logger.debug "Updated user cache for #{data['name']}"
       user_cache[user_id] = data

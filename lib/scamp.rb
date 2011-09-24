@@ -33,23 +33,23 @@ class Scamp
         logger.warn "Scamp initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!"
       end
     end
-    
+
     @rooms_to_join = []
     @rooms = {}
     @user_cache = {}
     @room_cache = {}
     @matchers ||= []
   end
-  
+
   def behaviour &block
     instance_eval &block
   end
-  
+
   def connect!(room_list)
     logger.info "Starting up"
     connect(api_key, room_list)
   end
-  
+
   def command_list
     matchers.map{|m| [m.trigger, m.conditions] }
   end
@@ -78,7 +78,7 @@ class Scamp
     params ||= {}
     matchers << Matcher.new(self, {:trigger => trigger, :action => block, :conditions => params[:conditions], :required_prefix => required_prefix})
   end
-  
+
   def process_message(msg)
     logger.debug "Received message #{msg.inspect}"
     matchers.each do |matcher|
