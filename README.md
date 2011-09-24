@@ -16,6 +16,24 @@ Ruby >= 1.9.2 (At least for the named captures)
 
 ## Usage and Examples
 
+### The most simple example:
+
+    require 'scamp'
+    
+    scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :verbose => true)
+    
+    scamp.behaviour do
+      # Simple matching based on regex or string:
+      match "ping" do
+        say "pong"
+      end
+    end
+    
+    # Connect and join some rooms
+    scamp.connect!([293788, "Monitoring"])
+
+### A more in-depth run through
+
 Matchers are tested in order and all that satisfy the match and conditions will be run. Careful, Scamp listens to itself, you could easily create an infinite loop. Look in the examples dir for more.
 
     require 'scamp'
