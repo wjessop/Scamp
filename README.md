@@ -100,7 +100,7 @@ Matchers are tested in order and all that satisfy the match and conditions will 
     # Connect and join some rooms
     scamp.connect!([293788, "Monitoring"])
 
-In the room/user conditions you can use the name, regex or ID of a user or room, in say you can use a string or ID, eg:
+In the room/user conditions and say/play commands you can use the name or ID of a user or room, eg:
 
     :conditions => {:room => /someregex/}
     :conditions => {:room => "some string"}
