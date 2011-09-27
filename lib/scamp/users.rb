@@ -8,6 +8,15 @@ class Scamp
       return user_id.to_s
     end
     
+    def is_me?(user_id)
+      if user_cache['me']
+        return user_cache['me']['id'] == user_id
+      else
+        fetch_data_for('me')
+        return false        
+      end
+    end
+    
     private
     
     def fetch_data_for(user_id)
