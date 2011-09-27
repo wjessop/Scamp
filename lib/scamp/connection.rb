@@ -17,6 +17,9 @@ class Scamp
           @rooms_to_join = room_list.map{|c| room_id(c) }
         end
         
+        # populate bot data separately, in case we are ignoring ourselves
+        fetch_data_for('me')
+        
       end
     end
       
