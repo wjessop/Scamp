@@ -129,7 +129,11 @@ In the room/user conditions and say/play commands you can use the name or ID of 
     say "#{user} said something in room #{room}", 237872
     say "#{user} said something in room #{room}", "System Administration"
 
-By default Scamp listens to itself. This could either be fun, or dangerous, you decide. You can turn this off by passing :first\_match\_only => true in the initialisation options
+By default Scamp listens to itself. This could either be fun, or dangerous, you decide. You can turn this off by passing :ignore\_self => true in the initialisation options:
+
+    scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :ignore_self => true)
+
+Scamp will also run _all_ match blocks that an input string matches, you can make Scamp only run the first block it matches by passing in :first\_match\_only => true:
 
     scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :first_match_only => true)
 
