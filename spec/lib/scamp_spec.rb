@@ -3,7 +3,7 @@ require "spec_helper"
 describe Scamp do
   before do
     @valid_params = {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
-    @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}}
+    @valid_user_cache_data = {123 => {"name" => "foo"}, 456 => {"name" => "bar"}, 'me' => {"name" => "bot", "id" => 123}}
     
     # Stub fetch for room data
     @valid_room_cache_data = {
@@ -182,6 +182,21 @@ describe Scamp do
         bot.send(:process_message, {:room_id => 123, :user_id => 123, :body => "a string"})
         bot.send(:process_message, {:room_id => 123, :user_id => 456, :body => "a string"})
         bot.send(:process_message, {:room_id => 456, :user_id => 123, :body => "a string"})
+      end
+      
+      it "should ignore itself if so requested" do
+        canary = mock
+        canary.expects(:bang).never
+
+        bot = a Scamp
+        bot.user_cache = @valid_user_cache_data
+        bot.ignore_self = true
+        bot.ignore_self.should be_true
+        bot.behaviour do
+          match("a string") {canary.bang}
+        end
+        
+        bot.send(:process_message, {:user_id => 123, :body => "a string"})
       end
     end
     

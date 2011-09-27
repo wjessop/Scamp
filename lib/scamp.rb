@@ -18,7 +18,8 @@ class Scamp
   include Messages
 
   attr_accessor :rooms, :user_cache, :room_cache, :matchers, :api_key, :subdomain,
-                :logger, :verbose, :first_match_only, :required_prefix, :rooms_to_join
+                :logger, :verbose, :first_match_only, :ignore_self, :required_prefix,
+                :rooms_to_join
 
   def initialize(options = {})
     options ||= {}
@@ -81,6 +82,7 @@ class Scamp
   
   def process_message(msg)
     logger.debug "Received message #{msg.inspect}"
+    return false if ignore_self && is_me?(msg[:user_id])
     matchers.each do |matcher|
       break if first_match_only & matcher.attempt(msg)
     end
