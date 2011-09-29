@@ -87,9 +87,8 @@ class Scamp
         elsif cond.is_a? Array
           case item
           when :room, :rooms
-            return true if cond.select {|e| e.is_a? Integer }.include?(msg[{:room => :room_id}[item]]) || 
-                           cond.select {|e| e.is_a? String }.include?(bot.room_name_for(msg[:room_id]))
-            return false
+            return cond.select {|e| e.is_a? Integer }.include?(msg[{:room => :room_id}[item]]) ||
+                   cond.select {|e| e.is_a? String }.include?(bot.room_name_for(msg[:room_id]))
           end
           bot.logger.error "Don't know how to deal with a match item of #{item}, cond #{cond}"
         end
