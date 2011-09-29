@@ -71,11 +71,11 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       # Limit the match to certain rooms, users or both.
       # 
       match /^Lets match (.+)$/, :conditions => {:room => "Some Room"} do
-        say "Only said if room name mathces /someregex/"
+        say "Only said if room name matches /someregex/"
       end
       
       match "some text", :conditions => {:user => "Some User"} do
-        say "Only said if user name mathces /someregex/"
+        say "Only said if user name matches /someregex/"
       end
       
       match /some other text/, :conditions => {:user => "Some User", :room => 123456} do
