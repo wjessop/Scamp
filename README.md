@@ -71,15 +71,19 @@ Matchers are tested in order and all that satisfy the match and conditions will 
       # Limit the match to certain rooms, users or both.
       # 
       match /^Lets match (.+)$/, :conditions => {:room => "Some Room"} do
-        say "Only said if room name mathces /someregex/"
+        say 'Only said if room name matches "Some Room"'
       end
       
       match "some text", :conditions => {:user => "Some User"} do
-        say "Only said if user name mathces /someregex/"
+        say 'Only said if user name matches "Some User"'
       end
       
       match /some other text/, :conditions => {:user => "Some User", :room => 123456} do
         say "You can mix conditions"
+      end
+
+      match "some text", :conditions => {:room => ["Some Room", "Some Other Room"]} do
+        say "You can list multiple rooms"
       end
       
       # 
@@ -145,7 +149,7 @@ Scamp will now require commands to begin with 'Bot: ' (or whatever you have spec
 
 ## TODO
 
-* Allow multiple values for conditions, eg: :conditions => {:room => ["This room", "Some room"]}
+* Allow multiple values for conditions, eg: :conditions => {:user => ["Some User", "Some Other User"]}
 * Add paste support
 
 ## How to contribute

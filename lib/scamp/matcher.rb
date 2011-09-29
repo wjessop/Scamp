@@ -84,6 +84,14 @@ class Scamp
             return false unless bot.username_for(msg[:user_id]) == cond
           end
           bot.logger.error "Don't know how to deal with a match item of #{item}, cond #{cond}"
+        elsif cond.is_a? Array
+          case item
+          when :room, :rooms
+            return true if cond.select {|e| e.is_a? Integer }.include?(msg[{:room => :room_id}[item]]) || 
+                           cond.select {|e| e.is_a? String }.include?(bot.room_name_for(msg[:room_id]))
+            return false
+          end
+          bot.logger.error "Don't know how to deal with a match item of #{item}, cond #{cond}"
         end
       end
       true
