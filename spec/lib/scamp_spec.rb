@@ -200,6 +200,54 @@ describe Scamp do
       end
     end
     
+    describe 'invoking' do
+      it "should call an existing string matcher" do
+        canary = mock
+        canary.expects(:lives).twice
+
+        bot = a Scamp
+        bot.behaviour do
+          match('a string') {invoke('another string')}
+          match('another string') {canary.lives}
+        end
+
+        bot.send(:process_message, {:body => 'a string'})
+        bot.send(:process_message, {:body => 'another string'})
+      end
+      
+      it "should call an existing regex matcher" do
+        canary = mock
+        canary.expects(:lives).twice
+
+        bot = a Scamp
+        bot.behaviour do
+          match('a string') {invoke(/another string/)}
+          match /another string/ do 
+            canary.lives
+          end
+        end
+
+        bot.send(:process_message, {:body => 'a string'})
+        bot.send(:process_message, {:body => 'another string'})
+      end
+      
+      it "should fail silently when there's no successful match" do
+        canary = mock
+        canary.expects(:lives).once
+
+        bot = a Scamp
+        bot.behaviour do
+          match('a string') {invoke('nonexistent string')}
+          match('another string') {canary.lives}
+          match('a string like no other') {invoke(/nonexistent regex/)}
+        end
+
+        lambda {bot.send(:process_message, {:body => 'a string'})}.should_not raise_error
+        bot.send(:process_message, {:body => 'another string'})
+        lambda {bot.send(:process_message, {:body => 'a string like no other'})}.should_not raise_error
+      end
+    end
+    
     describe "strings" do
       it "should match an exact string" do
         canary = mock

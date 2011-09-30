@@ -23,6 +23,12 @@ class Scamp
       false
     end
     
+    def run(msg, match = nil)
+      action_run = Action.new(bot, action, msg)
+      action_run.matches = match if match
+      action_run.run
+    end
+    
     private
     
     def triggered_by(message_text)
@@ -58,12 +64,6 @@ class Scamp
         false
       end
     end 
-    
-    def run(msg, match = nil)
-      action_run = Action.new(bot, action, msg)
-      action_run.matches = match if match
-      action_run.run
-    end
     
     def conditions_satisfied_by(msg)
       bot.logger.debug "Checking message against #{conditions.inspect}"
