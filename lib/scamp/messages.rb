@@ -4,7 +4,11 @@ class Scamp
     def say(message, room_id_or_name)
       send_message(room_id_or_name, message, "Textmessage")
     end
-    
+
+    def paste(message, room_id_or_name)
+      send_message(room_id_or_name, message, "PasteMessage")
+    end
+
     def play(sound, room_id_or_name)
       send_message(room_id_or_name, sound, "SoundMessage")
     end

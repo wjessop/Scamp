@@ -60,7 +60,11 @@ class Scamp
     def say(msg, room_id_or_name = room_id)
       bot.say(msg, room_id_or_name)
     end
-    
+
+    def paste(msg, room_id_or_name = room_id)
+      bot.paste(msg, room_id_or_name)
+    end
+
     def play(sound, room_id_or_name = room_id)
       bot.play(sound, room_id_or_name)
     end

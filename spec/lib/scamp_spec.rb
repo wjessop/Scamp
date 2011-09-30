@@ -606,6 +606,7 @@ describe Scamp do
       before do
         @message_post_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/room/123/speak.json"
       end
+
       it "should send a message" do
         mock_logger
         bot = a Scamp
@@ -618,7 +619,20 @@ describe Scamp do
         }
         logger_output.should =~ /DEBUG.*Posted message "Hi" to room 123/
       end
-      
+
+      it "should paste a message" do
+        mock_logger
+        bot = a Scamp
+
+        EM.run_block {
+          stub_request(:post, @message_post_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).
+            to_return(:status => 201, :body => Yajl::Encoder.encode(:room => @valid_room_cache_data[123]), :headers => {})
+          bot.send(:send_message, 123, "Hi", "PasteMessage")
+        }
+        logger_output.should =~ /DEBUG.*Posted message "Hi" to room 123/
+      end
+
       it "should handle HTTP errors fetching individual room data" do
         mock_logger
         bot = a Scamp
