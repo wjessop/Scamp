@@ -249,7 +249,7 @@ describe Scamp do
       
       it "should call a matcher by an alias" do
         canary = mock
-        canary.expects(:lives).twice
+        canary.expects(:lives).times(3)
 
         bot = a Scamp
         bot.behaviour do

@@ -74,15 +74,35 @@ scamp.behaviour do
   # Limit the match to certain rooms, users or both.
   # 
   match /^Lets match (.+)$/, :conditions => {:room => "Some Room"} do
-    say "Only said if room name mathces /someregex/"
+    say "Only said if room name matches /someregex/"
   end
   
   match "some text", :conditions => {:user => "Some User"} do
-    say "Only said if user name mathces /someregex/"
+    say "Only said if user name matches /someregex/"
   end
   
   match /some other text/, :conditions => {:user => "Some User", :room => 123456} do
     say "You can mix conditions"
+  end
+  
+  #
+  # Invoke other existing matchers from your matches.
+  #
+  match 'a basic matcher' do
+    say "Dreafully exciting"
+  end
+  
+  match 'a much more complicated matcher' do
+    invoke "a basic matcher"
+  end
+  
+  match /^a very (<complicated>) regex$/, :alias => 'simple' do
+    complicated ||= 'make sure to assign variables that might be left unassigned'
+    say "Use aliases to simplify invoking complicated matchers"
+  end
+  
+  match 'a simple string' do
+    invoke "simple"
   end
   
   # 
