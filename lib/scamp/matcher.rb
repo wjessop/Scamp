@@ -1,6 +1,6 @@
 class Scamp
   class Matcher
-    attr_accessor :conditions, :trigger, :action, :bot, :required_prefix
+    attr_accessor :conditions, :trigger, :action, :bot, :required_prefix, :alias
     
     def initialize(bot, params = {})
       params ||= {}
@@ -21,6 +21,12 @@ class Scamp
         return true
       end
       false
+    end
+    
+    def run(msg, match = nil)
+      action_run = Action.new(bot, action, msg)
+      action_run.matches = match if match
+      action_run.run
     end
     
     private
@@ -58,12 +64,6 @@ class Scamp
         false
       end
     end 
-    
-    def run(msg, match = nil)
-      action_run = Action.new(bot, action, msg)
-      action_run.matches = match if match
-      action_run.run
-    end
     
     def conditions_satisfied_by(msg)
       bot.logger.debug "Checking message against #{conditions.inspect}"

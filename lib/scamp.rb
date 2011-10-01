@@ -77,7 +77,7 @@ class Scamp
 
   def match trigger, params={}, &block
     params ||= {}
-    matchers << Matcher.new(self, {:trigger => trigger, :action => block, :conditions => params[:conditions], :required_prefix => required_prefix})
+    matchers << Matcher.new(self, {:trigger => trigger, :action => block, :conditions => params[:conditions], :required_prefix => required_prefix, :alias => params[:alias]})
   end
   
   def process_message(msg)
