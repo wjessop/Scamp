@@ -1,6 +1,6 @@
 class Scamp
   class Matcher
-    attr_accessor :conditions, :trigger, :action, :bot, :required_prefix
+    attr_accessor :conditions, :trigger, :action, :bot, :required_prefix, :alias
     
     def initialize(bot, params = {})
       params ||= {}

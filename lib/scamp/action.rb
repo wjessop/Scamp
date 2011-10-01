@@ -58,7 +58,7 @@ class Scamp
     end
     
     def invoke(matcher)
-      bot.matchers.find_all{|m| m.trigger == matcher}.each {|m| m.run(message)}
+      bot.matchers.find_all{|m| m.trigger == matcher || (m.alias && m.alias == matcher)}.each {|m| m.run(message)}
     end
     
     def say(msg, room_id_or_name = room_id)

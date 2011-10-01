@@ -246,6 +246,36 @@ describe Scamp do
         bot.send(:process_message, {:body => 'another string'})
         lambda {bot.send(:process_message, {:body => 'a string like no other'})}.should_not raise_error
       end
+      
+      it "should call a matcher by an alias" do
+        canary = mock
+        canary.expects(:lives).twice
+
+        bot = a Scamp
+        bot.behaviour do
+          match('a string', :alias => 'alias1') {invoke('alias2')}
+          match('another string', :alias => 'alias2') {canary.lives}
+          match('a string like no other', :alias => 'alias3') {invoke('another string')}
+        end
+
+        bot.send(:process_message, {:body => 'a string'})
+        bot.send(:process_message, {:body => 'another string'})
+        bot.send(:process_message, {:body => 'a string like no other'})
+      end
+      
+      it "should call a not call a matcher with a nil alias" do
+        canary = mock
+        canary.expects(:lives).once
+
+        bot = a Scamp
+        bot.behaviour do
+          match('a string') {invoke(nil)}
+          match('another string') {canary.lives}
+        end
+
+        bot.send(:process_message, {:body => 'a string'})
+        bot.send(:process_message, {:body => 'another string'})
+      end
     end
     
     describe "strings" do
