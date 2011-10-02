@@ -106,34 +106,69 @@ describe Scamp do
   describe "matching" do
     
     context "with conditions" do
-      it "should limit matches by room id" do
-        canary = mock
-        canary.expects(:lives).once
-        canary.expects(:bang).never
-        
-        bot = a Scamp
-        bot.behaviour do
-          match("a string", :conditions => {:room => 123}) {canary.lives}
-          match("a string", :conditions => {:room => 456}) {canary.bang}
+      context "for room" do
+
+        it "should limit matches by id" do
+          canary = mock
+          canary.expects(:lives).once
+          canary.expects(:bang).never
+          
+          bot = a Scamp
+          bot.behaviour do
+            match("a string", :conditions => {:room => 123}) {canary.lives}
+            match("a string", :conditions => {:room => 456}) {canary.bang}
+          end
+          
+          bot.send(:process_message, {:room_id => 123, :body => "a string"})
         end
-        
-        bot.send(:process_message, {:room_id => 123, :body => "a string"})
-      end
-      
-      it "should limit matches by room name" do
-        canary = mock
-        canary.expects(:lives).once
-        canary.expects(:bang).never
-        
-        bot = a Scamp
-        bot.behaviour do
-          match("a string", :conditions => {:room => "foo"}) {canary.lives}
-          match("a string", :conditions => {:room => "bar"}) {canary.bang}
+
+        it "should limit matches by array of IDs" do
+          canary = mock
+          canary.expects(:lives).once
+          canary.expects(:bang).never
+          
+          bot = a Scamp
+          bot.behaviour do
+            match("a string", :conditions => {:room => [123]}) {canary.lives}
+            match("a string", :conditions => {:room => [456]}) {canary.bang}
+          end
+          
+          bot.room_cache = @valid_room_cache_data
+
+          bot.send(:process_message, {:room_id => 123, :body => "a string"})
         end
-        
-        bot.room_cache = @valid_room_cache_data
-        
-        bot.send(:process_message, {:room_id => 123, :body => "a string"})
+
+        it "should limit matches by array in complex form" do
+          canary = mock
+          canary.expects(:lives).once
+          canary.expects(:bang).never
+
+          bot = a Scamp
+          bot.behaviour do
+           match("a string", :conditions => {:rooms => ["foo", 777]}) {canary.lives}
+           match("a string", :conditions => {:room => ["bar"]}) {canary.bang}
+          end
+
+          bot.room_cache = @valid_room_cache_data
+          bot.send(:process_message, {:room_id => 123, :body => "a string"})
+        end
+
+        it "should limit matches by name" do
+          canary = mock
+          canary.expects(:lives).once
+          canary.expects(:bang).never
+          
+          bot = a Scamp
+          bot.behaviour do
+            match("a string", :conditions => {:room => "foo"}) {canary.lives}
+            match("a string", :conditions => {:room => "bar"}) {canary.bang}
+          end
+          
+          bot.room_cache = @valid_room_cache_data
+          
+          bot.send(:process_message, {:room_id => 123, :body => "a string"})
+        end
+
       end
       
       it "should limit matches by user id" do
