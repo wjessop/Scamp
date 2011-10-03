@@ -175,7 +175,7 @@ Scamp will now require commands to begin with 'Bot: ' (or whatever you have spec
 
 ## TODO
 
-	* Add paste support
+	* Allow multiple values for conditions, eg: :conditions => {:user => ["Some User", "Some Other User"]}
 
 ## How to contribute
 
