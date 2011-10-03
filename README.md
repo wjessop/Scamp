@@ -34,6 +34,39 @@ end
 scamp.connect!([293788, "Monitoring"])
 ```
 
+### Everyone wants an image search
+
+``` ruby
+require 'scamp'
+require 'cgi'
+
+scamp = Scamp.new(:api_key => "YOUR API KEY", :subdomain => "yoursubdomain", :verbose => true)
+
+scamp.behaviour do
+  match /^artme (?<search>\w+)/ do
+    url = "http://ajax.googleapis.com/ajax/services/search/images?rsz=large&start=0&v=1.0&q=#{CGI.escape(search)}"
+    http = EventMachine::HttpRequest.new(url).get
+    http.errback { say "Couldn't get #{url}: #{http.response_status.inspect}" }
+    http.callback {
+      if http.response_header.status == 200
+        results = Yajl::Parser.parse(http.response)
+        if results['responseData']['results'].size > 0
+          say results['responseData']['results'][0]['url']
+        else
+          say "No images matched #{search}"
+        end
+      else
+        # logger.warn "Couldn't get #{url}"
+        say "Couldn't get #{url}"
+      end
+    }
+  end
+end
+
+# Connect and join some rooms
+scamp.connect!([293788, "Monitoring"])
+```
+
 ### A more in-depth run through
 
 Matchers are tested in order and all that satisfy the match and conditions will be run. Careful, Scamp listens to itself, you could easily create an infinite loop. Look in the examples dir for more.
