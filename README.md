@@ -218,10 +218,11 @@ Here's the most direct way to get your work merged into the project:
 2. Clone down your fork
 3. Create a feature branch
 4. Add your feature + tests
-5. Make sure everything still passes by running the tests
-6. If necessary, rebase your commits into logical chunks, without errors
-7. Push the branch up
-8. Send a pull request for your branch
+5. Document new features in the README
+6. Make sure everything still passes by running the tests
+7. If necessary, rebase your commits into logical chunks, without errors
+8. Push the branch up
+9. Send a pull request for your branch
 
 Take a look at the TODO list or known issues for some inspiration if you need it.
 
