@@ -85,19 +85,19 @@ scamp.behaviour do
     say "You said #{matches[0]} and #{matches[1]}"
   end
 
-	#
-	# You can specifically paste text: 
-	#
-	
-	match "paste stuff" do
-		paste "Awesome texts"
-		
-		# say()'ing multiline strings will paste automatically however:
-		say <<-EOS
+  #
+  # You can specifically paste text: 
+  #
+  
+  match "paste stuff" do
+    paste "Awesome texts"
+    
+    # say()'ing multiline strings will paste automatically however:
+    say <<-EOS
 This will be pasted
 even though you called say
     EOS
-	end
+  end
   
   # 
   # A special user and room method is available in match blocks.
