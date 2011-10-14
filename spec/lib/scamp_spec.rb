@@ -515,6 +515,7 @@ describe Scamp do
     context "room operations" do
       before do
         @room_list_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/rooms.json"
+        @me_list_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/users/me.json"
         @room_url = "https://#{@valid_params[:subdomain]}.campfirenow.com/room/123.json"
         @stream_url = "https://streaming.campfirenow.com/room/123/live.json"
       end
@@ -531,7 +532,37 @@ describe Scamp do
         }
         logger_output.should =~ /DEBUG.*Fetched room list/
       end
-      
+
+      it "should invoke the post connection callback" do
+        mock_logger
+        bot = a Scamp
+
+        invoked_cb = false
+
+        EM.run_block {
+          stub_request(:get, @room_list_url).
+          with(:headers => {
+                 'Authorization'=>[@valid_params[:api_key], 'X'],
+                 'Content-Type' => 'application/json'
+               }).
+          to_return(:status => 200, :body => Yajl::Encoder.encode(:rooms => @valid_room_cache_data.values), :headers => {})
+
+          stub_request(:get, @room_list_url).
+          with(:headers => {
+                 'Authorization'=>[@valid_params[:api_key], 'X']
+               }).
+          to_return(:status => 200, :body => Yajl::Encoder.encode(:rooms => @valid_room_cache_data.values), :headers => {})
+
+          # Disable fetch_data_for, not important to this test.
+          Scamp.any_instance.expects(:fetch_data_for).returns(nil)
+
+          bot.send(:connect!, [@valid_room_cache_data.keys.first]) do
+            invoked_cb = true
+          end
+        }
+        invoked_cb.should be_true
+      end
+
       it "should handle HTTP errors fetching the room list" do
         mock_logger
         bot = a Scamp
@@ -656,7 +687,7 @@ describe Scamp do
   def mock_logger
     @logger_string = StringIO.new
     @fake_logger = Logger.new(@logger_string)
-    Scamp.any_instance.expects(:logger).returns(@fake_logger)
+    Scamp.any_instance.expects(:logger).at_least(1).returns(@fake_logger)
   end
 
   # Bleurgh
