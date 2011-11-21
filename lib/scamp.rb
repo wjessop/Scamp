@@ -46,9 +46,9 @@ class Scamp
     instance_eval &block
   end
   
-  def connect!(room_list)
+  def connect!(room_list, &blk)
     logger.info "Starting up"
-    connect(api_key, room_list)
+    connect(api_key, room_list, &blk)
   end
   
   def command_list
