@@ -51,8 +51,6 @@ class Scamp
       self.instance_eval &@action
     end
     
-    private
-    
     def command_list
       bot.command_list
     end
