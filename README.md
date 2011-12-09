@@ -232,6 +232,7 @@ First class support, commits and pull requests, thanks guys!
 
 * [Caius Durling](http://caius.name/)
 * Sudara Williams of [Ramen Music](http://ramenmusic.com)
+* [Dom Hodgson](http://www.thehodge.co.uk/) (for the name)
 
 ## License
 
