@@ -13,10 +13,10 @@ class Scamp
 
     def is_me?(user_id)
       if user_cache['me']
-        return user_cache['me']['id'] == user_id
+        user_cache['me']['id'] == user_id
       else
         fetch_data_for('me')
-        return false        
+        false
       end
     end
 
@@ -24,7 +24,7 @@ class Scamp
       user_cache[user_id] != nil
     end
 
-    private
+  private
 
     def fetch_data_for(user_id)
       return unless user_id
