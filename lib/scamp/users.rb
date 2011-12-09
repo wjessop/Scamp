@@ -3,11 +3,14 @@ class Scamp
     # Return the user_id if we haven't got the real name and
     # kick off a user data fetch
     def username_for(user_id)
-      return user_cache[user_id]["name"] if user_cache[user_id]
-      fetch_data_for(user_id)
-      return user_id.to_s
+      if cached_user?(user_id)
+        user_cache[user_id]["name"]
+      else
+        fetch_data_for(user_id)
+        user_id.to_s
+      end
     end
-    
+
     def is_me?(user_id)
       if user_cache['me']
         return user_cache['me']['id'] == user_id
@@ -16,9 +19,13 @@ class Scamp
         return false        
       end
     end
-    
+
+    def cached_user? user_id
+      user_cache[user_id] != nil
+    end
+
     private
-    
+
     def fetch_data_for(user_id)
       return unless user_id
       url = "https://#{subdomain}.campfirenow.com/users/#{user_id}.json"
