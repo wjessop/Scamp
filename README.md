@@ -121,7 +121,11 @@ end
 
 ## TODO
 
+  * Get messages working back to adapters
 	* Allow multiple values for conditions, eg: :conditions => {:user => ["Some User", "Some Other User"]}
+  * Examples for writing adapters
+  * Plugin system
+  * Examples for writing plugins
 
 ## How to contribute
 
