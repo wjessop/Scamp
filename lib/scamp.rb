@@ -1,31 +1,15 @@
 require 'eventmachine'
-require 'em-http-request'
-require 'yajl'
 require "logger"
 
 require "scamp/version"
-require 'scamp/connection'
-require 'scamp/rooms'
-require 'scamp/users'
-require 'scamp/matcher'
 require 'scamp/action'
-require 'scamp/messages'
+require 'scamp/matcher'
 
 class Scamp
-  include Connection
-  include Rooms
-  include Users
-  include Messages
+  attr_accessor :adapters, :matchers, :logger, :verbose
 
-  attr_accessor :rooms, :user_cache, :room_cache, :matchers, :api_key, :subdomain,
-                :logger, :verbose, :first_match_only, :ignore_self, :required_prefix,
-                :rooms_to_join
-
-  def initialize(options = {})
+  def initialize(options = {}, &block)
     options ||= {}
-    raise ArgumentError, "You must pass an API key" unless options[:api_key]
-    raise ArgumentError, "You must pass a subdomain" unless options[:subdomain]
-
     options.each do |k,v|
       s = "#{k}="
       if respond_to?(s)
@@ -35,20 +19,29 @@ class Scamp
       end
     end
     
-    @rooms_to_join = []
-    @rooms = {}
-    @user_cache = {}
-    @room_cache = {}
     @matchers ||= []
+    @adapters ||= {}
+
+    yield self
+
+    self.connect!
   end
-  
-  def behaviour &block
-    instance_eval &block
+
+  def adapter name, klass, opts={}
+    adapter = klass.new self, opts
+    sid = adapter.subscribe do |msg|
+      process_message(name, msg)
+    end
+    @adapters[name] = {:adapter => adapter, :sid => sid}
   end
-  
-  def connect!(room_list, &blk)
-    logger.info "Starting up"
-    connect(api_key, room_list, &blk)
+
+  def connect!
+    EM.run do
+      @adapters.each do |name, data|
+        logger.info "Connecting to #{name} adapter"
+        data[:adapter].connect!
+      end
+    end
   end
   
   def command_list
@@ -73,18 +66,13 @@ class Scamp
     @first_match_only
   end
 
-  private
-
   def match trigger, params={}, &block
-    params ||= {}
-    matchers << Matcher.new(self, {:trigger => trigger, :action => block, :conditions => params[:conditions], :required_prefix => required_prefix})
+    matchers << Matcher.new(self, {:trigger => trigger, :action => block, :on => params[:on], :conditions => params[:conditions]})
   end
   
-  def process_message(msg)
-    logger.debug "Received message #{msg.inspect}"
-    return false if ignore_self && is_me?(msg[:user_id])
+  def process_message(channel, msg)
     matchers.each do |matcher|
-      break if first_match_only & matcher.attempt(msg)
+      break if first_match_only & matcher.attempt(channel, msg)
     end
   end
 end
