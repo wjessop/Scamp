@@ -2,7 +2,6 @@ require 'eventmachine'
 require "logger"
 
 require "scamp/version"
-require 'scamp/action'
 require 'scamp/matcher'
 
 class Scamp
@@ -29,8 +28,8 @@ class Scamp
 
   def adapter name, klass, opts={}
     adapter = klass.new self, opts
-    sid = adapter.subscribe do |msg|
-      process_message(name, msg)
+    sid = adapter.subscribe do |context, msg|
+      process_message(name, context, msg)
     end
     @adapters[name] = {:adapter => adapter, :sid => sid}
   end
@@ -70,9 +69,9 @@ class Scamp
     matchers << Matcher.new(self, {:trigger => trigger, :action => block, :on => params[:on], :conditions => params[:conditions]})
   end
   
-  def process_message(channel, msg)
+  def process_message(channel, context, msg)
     matchers.each do |matcher|
-      break if first_match_only & matcher.attempt(channel, msg)
+      break if first_match_only & matcher.attempt(channel, context, msg)
     end
   end
 end

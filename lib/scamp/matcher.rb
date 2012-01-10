@@ -10,16 +10,16 @@ class Scamp
       @bot = bot
     end
 
-    def attempt(channel, msg)
+    def attempt(channel, context, msg)
       if listening?(channel) && msg.matches?(trigger) && msg.valid?(conditions)
-        run(msg)
+        run(context, msg)
         return true
       end
       return false
     end
 
-    def run(msg)
-      action.call(msg)
+    def run(context, msg)
+      action.call(context, msg)
     end
 
     def listening?(channel)

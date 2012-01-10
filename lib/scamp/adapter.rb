@@ -1,5 +1,5 @@
 class Scamp
-  module Adapter
+  class Adapter
     def initialize(bot, opts={})
       @bot = bot
       @opts = opts
