@@ -1,12 +1,15 @@
+require 'scamp/matches'
+
 class Scamp
   class Message
-    attr_reader :matches
+    attr_reader :adapter, :match
 
     def initialize(adapter, args={})
       raise ArgumentError, "A Message must have a body" unless args[:body]
-      args.each do |k,v|
-        self.class.send :define_method, k do
-          v
+      @adapter = adapter
+      args.each do |arg,value|
+        self.class.send :define_method, arg do
+          value
         end
       end
     end
@@ -16,27 +19,21 @@ class Scamp
     end
 
     def matches? trigger
-      if trigger.is_a? String
-        trigger == body
-      elsif trigger.is_a? Regexp
-        match = trigger.match body
-        if match
-          setup_captures match
-          return true
-        end
-        return false
-      end
+      match? trigger, body
     end
 
-    private
-      def setup_captures(match)
-        @matches = match[1..-1]
-        match.names.each do |name|
-          name_s = name.to_sym
-          self.class.send :define_method, name_s do
-            match[name_s]
-          end
-        end if match.respond_to?(:names) # 1.8 doesn't support named captures
+    def matches
+      Scamp::Matches.new(match) if match
+    end
+
+    protected
+      def match? trigger, message
+        if trigger.is_a? String
+          return true if trigger == message
+        elsif trigger.is_a? Regexp
+          return true if (@match = trigger.match message)
+        end
+        return false
       end
   end
 end

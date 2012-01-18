@@ -14,6 +14,10 @@ class Scamp
     end
     alias_method :<<, :push
 
+    def connect!
+      raise NotImplementedError, "connect! must be implemented"
+    end
+
     private
       def channel
         @channel ||= EM::Channel.new

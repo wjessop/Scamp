@@ -5,7 +5,7 @@ require "scamp/version"
 require 'scamp/matcher'
 
 class Scamp
-  attr_accessor :adapters, :matchers, :logger, :verbose
+  attr_accessor :adapters, :plugins, :matchers, :logger, :verbose, :first_match_only
 
   def initialize(options = {}, &block)
     options ||= {}
@@ -20,10 +20,9 @@ class Scamp
     
     @matchers ||= []
     @adapters ||= {}
+    @plugins  ||= []
 
     yield self
-
-    self.connect!
   end
 
   def adapter name, klass, opts={}
@@ -32,6 +31,10 @@ class Scamp
       process_message(name, context, msg)
     end
     @adapters[name] = {:adapter => adapter, :sid => sid}
+  end
+
+  def plugin klass, opts={}
+    plugins << klass.new(self, opts)
   end
 
   def connect!

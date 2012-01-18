@@ -5,7 +5,7 @@ class Scamp
     def initialize(bot, params = {})
       params ||= {}
       params[:conditions] ||= {}
-      params[:on] ||= []
+      params[:on] ||= bot.adapters.keys
       params.each { |k,v| send("#{k}=", v) }
       @bot = bot
     end
@@ -23,7 +23,7 @@ class Scamp
     end
 
     def listening?(channel)
-      on.empty? || on.include?(channel)
+      on.include?(channel)
     end
   end
 end
