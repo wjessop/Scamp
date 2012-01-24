@@ -662,8 +662,22 @@ describe Scamp do
         }
         logger_output.should =~ /ERROR.*Couldn't connect to #{@room_url} to fetch room data for room 123/
       end
-      
+
       it "should stream a room"
+
+      it "should handle response errors streaming a room" do
+        mock_logger
+        bot = a Scamp
+        
+        EM.run_block {
+          stub_request(:get, @stream_url).
+            with(:headers => {'Authorization'=>[@valid_params[:api_key], 'X']}).
+            to_return(:status => 201, :body => 'foobarbaz', :headers => {})
+            lambda { bot.send(:stream, 123) }.should_not raise_error
+        }
+        logger_output.should =~ /ERROR.*Couldn't parse room data for room 123 with url #{@stream_url}, http response data was foobarbaz.../
+      end
+
       it "should handle HTTP errors streaming a room"
       it "should handle network errors streaming a room"
     end

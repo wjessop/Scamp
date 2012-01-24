@@ -99,7 +99,13 @@ class Scamp
       http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 0).get :head => {'authorization' => [api_key, 'X']}
       http.errback { logger.error "Couldn't stream room #{room_id} at url #{url}" }
       http.callback { logger.info "Disconnected from #{url}"; rooms_to_join << room_id}
-      http.stream {|chunk| json_parser << chunk }
+      http.stream do |chunk| 
+        begin
+          json_parser << chunk  
+        rescue Yajl::ParseError => e
+          logger.error "Couldn't parse room data for room #{room_id} with url #{url}, http response data was #{chunk[0..50]}..."
+        end
+      end
     end
 
     def room_id_from_room_name(room_name)
