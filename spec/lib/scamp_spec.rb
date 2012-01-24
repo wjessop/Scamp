@@ -679,7 +679,6 @@ describe Scamp do
       end
 
       it "should handle HTTP errors streaming a room"
-      it "should handle network errors streaming a room"
     end
     
     context "message operations" do
