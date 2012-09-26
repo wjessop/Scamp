@@ -26,13 +26,14 @@ class Scamp
     end
 
     protected
-      def match? trigger, message
-        if trigger.is_a? String
-          return true if trigger == message
-        elsif trigger.is_a? Regexp
-          return true if (@match = trigger.match message)
-        end
-        return false
+
+    def match?(trigger, message)
+      if trigger.is_a? String
+        return true if trigger == message
+      elsif trigger.is_a? Regexp
+        return true if (@match = trigger.match message)
       end
+      return false
+    end
   end
 end
