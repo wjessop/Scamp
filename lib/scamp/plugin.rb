@@ -9,6 +9,7 @@ class Scamp
     end
 
     attr_reader :bot, :options
+
     def initialize bot, opts={}
       @bot = bot
       @options = opts

@@ -45,7 +45,7 @@ class Scamp
       end
     end
   end
-  
+
   def command_list
     matchers.map{|m| [m.trigger, m.conditions] }
   end
@@ -71,7 +71,7 @@ class Scamp
   def match trigger, params={}, &block
     matchers << Matcher.new(self, {:trigger => trigger, :action => block, :on => params[:on], :conditions => params[:conditions]})
   end
-  
+
   def process_message(channel, context, msg)
     matchers.each do |matcher|
       break if first_match_only & matcher.attempt(channel, context, msg)

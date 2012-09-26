@@ -19,8 +19,9 @@ class Scamp
     end
 
     private
-      def channel
-        @channel ||= EM::Channel.new
-      end
+    
+    def channel
+      @channel ||= EM::Channel.new
+    end
   end
 end
