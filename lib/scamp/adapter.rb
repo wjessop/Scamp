@@ -1,5 +1,7 @@
 class Scamp
   class Adapter
+    attr_accessor :bot
+
     def initialize(bot, opts={})
       @bot = bot
       @opts = opts
