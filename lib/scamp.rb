@@ -7,7 +7,7 @@ require 'scamp/adapter'
 require 'scamp/plugin'
 
 class Scamp
-  attr_accessor :adapters, :plugins, :matchers, :logger, :verbose, :first_match_only
+  attr_accessor :adapters, :plugins, :matchers, :logger, :verbose, :first_match_only, :required_format, :strip_prefix
 
   def initialize(options = {}, &block)
     options ||= {}
@@ -20,6 +20,7 @@ class Scamp
       end
     end
     
+    @strip_prefix ||= true
     @matchers ||= []
     @adapters ||= {}
     @plugins  ||= []
