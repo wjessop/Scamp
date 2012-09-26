@@ -5,7 +5,6 @@ class Scamp
     attr_reader :adapter, :match
 
     def initialize(adapter, args={})
-      raise ArgumentError, "A Message must have a body" unless args[:body]
       @adapter = adapter
       args.each do |arg,value|
         self.class.send :define_method, arg do
