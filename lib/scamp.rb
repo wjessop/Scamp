@@ -51,10 +51,8 @@ class Scamp
   end
 
   def logger
-    unless @logger
-      @logger = Logger.new(STDOUT)
-      @logger.level = (verbose ? Logger::DEBUG : Logger::INFO)
-    end
+    @logger ||= Logger.new(STDOUT)
+    @logger.level = (verbose ? Logger::DEBUG : Logger::INFO)
     @logger
   end
 
