@@ -172,16 +172,17 @@ describe Scamp do
   describe ".adapter" do
     let(:adapter) { mock }
     before do
-      RspecAdapter.stub(:new) do
+      RspecAdapter.stubs(:new) do
         adapter
       end
     end
 
     it "subscribes to an adapter" do
-      adapter.should_receive(:subscribe).once
+      adapter.expects(:subscribe).once
+      RspecAdapter.stubs(:new).returns adapter
 
       Scamp.new do |scamp|
-        scamp.adapter RspecAdapter
+        scamp.adapter :rspec_adapter, RspecAdapter
       end
     end
   end
