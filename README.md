@@ -143,14 +143,17 @@ Here's the most direct way to get your work merged into the project:
 
 Take a look at the TODO list or known issues for some inspiration if you need it.
 
+## Authors
+
+* [Will Jessop](http://willj.net/)
+* [Adam Holt](http://adamholt.co.uk/)
+
 ## Thanks
 
 First class support, commits and pull requests, thanks guys!
 
 * [Caius Durling](http://caius.name/)
 * Sudara Williams of [Ramen Music](http://ramenmusic.com)
-* [Dom Hodgson](http://www.thehodge.co.uk/) (for the name)
-* [Adam Holt](http://adamholt.co.uk/)
 
 ## License
 
