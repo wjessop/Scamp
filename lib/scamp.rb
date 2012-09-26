@@ -3,6 +3,8 @@ require "logger"
 
 require "scamp/version"
 require 'scamp/matcher'
+require 'scamp/adapter'
+require 'scamp/plugin'
 
 class Scamp
   attr_accessor :adapters, :plugins, :matchers, :logger, :verbose, :first_match_only
