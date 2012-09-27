@@ -5,8 +5,8 @@ require "scamp/version"
 Gem::Specification.new do |s|
   s.name        = "scamp"
   s.version     = Scamp::VERSION
-  s.authors     = ["Will Jessop"]
-  s.email       = ["will@willj.net"]
+  s.authors     = ["Will Jessop", "Adam Holt"]
+  s.email       = ["will@willj.net", "me@adamholt.co.uk"]
   s.homepage    = "https://github.com/wjessop/Scamp"
   s.summary     = %q{Eventmachine based Campfire bot framework}
   s.description = %q{Eventmachine based Campfire bot framework}
