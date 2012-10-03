@@ -31,6 +31,7 @@ class Scamp
   def adapter name, klass, opts={}
     adapter = klass.new self, opts
     sid = adapter.subscribe do |context, msg|
+      puts "Got message with room_id #{msg.room_id}"
       process_message(name, context, msg)
     end
     @adapters[name] = {:adapter => adapter, :sid => sid}
