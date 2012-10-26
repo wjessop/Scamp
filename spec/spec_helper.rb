@@ -1,3 +1,9 @@
+require 'simplecov'
+
+SimpleCov.start do
+  add_filter "/spec/"
+end
+
 require File.expand_path("../lib/scamp", File.dirname(__FILE__))
 require File.expand_path("../lib/scamp/adapter", File.dirname(__FILE__))
 require File.expand_path("../lib/scamp/message", File.dirname(__FILE__))
