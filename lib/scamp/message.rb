@@ -7,7 +7,7 @@ class Scamp
     def initialize(adapter, args={})
       @adapter = adapter
       args.each do |arg,value|
-        self.class.send :define_method, arg do
+        (class << self; self end).send :define_method, arg do
           value
         end
       end
