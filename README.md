@@ -8,11 +8,11 @@ If you like or use Scamp I'd love to hear from you. Drop me at line at will at 3
 
 ## Requirements
 
-Ruby >= 1.9.2 (At least for the named captures)
+Ruby >= 1.9.2
 
 ## Installation
 
-`gem install scamp` or put `gem 'scamp'` in your Gemfile.
+`gem install scamp` or `gem 'scamp'` in your Gemfile.
 
 ## Usage and Examples
 
@@ -25,11 +25,11 @@ require 'scamp-campfire-adapter'
 Scamp.new do |scamp|
   scamp.adapter :campfire, Scamp::Campfire::Adapter, :api_key => "YOUR API KEY", 
                                                      :subdomain => "yoursubdomain",
-                                                     :rooms => [293788,"Monitoring"]
+                                                     :rooms => [293788]
 
   # Simple matching based on regex or string:
-  scamp.match "ping" do |msg|
-    say "pong"
+  scamp.match "ping" do |room, msg|
+    room.say "pong"
   end
 end
 ```
@@ -43,9 +43,9 @@ require 'cgi'
 Scamp.new do |scamp|
   scamp.adapter :campfire, Scamp::Campfire::Adapter, :api_key => "YOUR API KEY", 
                                                      :subdomain => "yoursubdomain",
-                                                     :rooms => [293788,"Monitoring"]
+                                                     :rooms => [293788]
 
-  scamp.match /^artme (?<search>\w+)/ do |msg|
+  scamp.match /^artme (?<search>\w+)/ do |room, msg|
     url = "http://ajax.googleapis.com/ajax/services/search/images?rsz=large&start=0&v=1.0&q=#{CGI.escape(search)}"
     http = EventMachine::HttpRequest.new(url).get
     http.errback { say "Couldn't get #{url}: #{http.response_status.inspect}" }
@@ -53,13 +53,13 @@ Scamp.new do |scamp|
       if http.response_header.status == 200
         results = Yajl::Parser.parse(http.response)
         if results['responseData']['results'].size > 0
-          say results['responseData']['results'][0]['url']
+          room.say results['responseData']['results'][0]['url']
         else
-          say "No images matched #{search}"
+          room.say "No images matched #{search}"
         end
       else
         # logger.warn "Couldn't get #{url}"
-        say "Couldn't get #{url}"
+        room.say "Couldn't get #{url}"
       end
     }
   end

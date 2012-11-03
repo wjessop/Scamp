@@ -3,3 +3,6 @@ Gemfile.lock
 pkg/
 coverage/
 .DS_Store
+bin
+.rbx
+.bundle
