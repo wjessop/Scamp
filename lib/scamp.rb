@@ -19,7 +19,7 @@ class Scamp
         logger.warn "Scamp initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!"
       end
     end
-    
+
     @strip_prefix ||= true
     @matchers ||= []
     @adapters ||= {}
@@ -47,10 +47,6 @@ class Scamp
         data[:adapter].connect!
       end
     end
-  end
-
-  def command_list
-    matchers.map{|m| [m.trigger, m.conditions] }
   end
 
   def logger

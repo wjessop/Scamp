@@ -187,6 +187,24 @@ describe Scamp do
     end
   end
 
+  describe ".plugin" do
+    it "creates a new instance of the plugin" do
+      Scamp::Plugin.expects(:new)
+      Scamp.new do |scamp|
+        scamp.plugin Scamp::Plugin
+      end
+    end
+
+    it "passes options through to plugin instance" do
+      Scamp.new do |scamp|
+        opts = {:hello => "World"}
+        Scamp::Plugin.expects(:new).with(scamp, opts)
+
+        scamp.plugin Scamp::Plugin, opts
+      end
+    end
+  end
+
   # Urg
   def mock_logger
     @logger_string = StringIO.new

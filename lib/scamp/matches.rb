@@ -5,10 +5,10 @@ class Scamp
     def initialize matches
       @matches = matches
       @matches.names.each do |name|
-        self.class.send :define_method, name.to_sym do
+        self.define_singleton_method name.to_sym do
           matches[name.to_sym]
         end
-      end if @matches.respond_to?(:names) # 1.8 doesn't support named captures
+      end
     end
 
     def [] index
@@ -16,7 +16,7 @@ class Scamp
     end
 
     def each
-      @matches.each {|match| yield match }
+      @matches[1..-1].each {|match| yield match }
     end
   end
 end

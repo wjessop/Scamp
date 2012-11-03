@@ -6,8 +6,9 @@ class Scamp
 
     def initialize(adapter, args={})
       @adapter = adapter
+      raise ArgumentError, "message must have a body" unless args[:body]
       args.each do |arg,value|
-        (class << self; self end).send :define_method, arg do
+        self.define_singleton_method arg do
           value
         end
       end

@@ -14,4 +14,16 @@ describe Scamp::Matches do
     matches.url.should eql("https://github.com/wjessop/Scamp/")
     matches[1].should eql("https://github.com/wjessop/Scamp/")
   end
+
+  describe '.each' do
+    it "iterates over each match" do
+      results = []
+      matches.each do |match|
+        results << match
+      end
+
+      results.should include("Scamp")
+      results.should include("https://github.com/wjessop/Scamp/")
+    end
+  end
 end

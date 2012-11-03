@@ -8,14 +8,14 @@ class Scamp
     end
 
     def matches_required_format?(msg)
-      return true if msg.nil?
+      return true unless msg
       return true unless bot.required_format
       if bot.required_format.is_a? String
         msg.index(bot.required_format) == 0
       elsif bot.required_format.is_a? Regexp
         msg.match bot.required_format
       else
-        bot.logger.error "You passed a :required_format that isn't a string or regexp, dont't know how to match it!"
+        raise ArgumentError, "You passed a :required_format that isn't a string or regexp, dont't know how to match it!"
       end
     end
 
