@@ -3,9 +3,10 @@ class Scamp
     attr_accessor :on, :conditions, :trigger, :action, :bot, :required_prefix
 
     def initialize(bot, params = {})
-      params ||= {}
       params[:conditions] ||= {}
       params[:on] ||= bot.adapters.keys
+      raise ArgumentError, "matcher must have a trigger" unless params[:trigger]
+      raise ArgumentError, "matcher must have a action" unless params[:action]
       params.each { |k,v| send("#{k}=", v) }
       @bot = bot
     end
