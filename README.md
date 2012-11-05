@@ -38,6 +38,8 @@ end
 
 ``` ruby
 require 'scamp'
+require 'scamp-campfire-adapter'
+require 'em-http-request'
 require 'cgi'
 
 Scamp.new do |scamp|
@@ -58,7 +60,6 @@ Scamp.new do |scamp|
           room.say "No images matched #{search}"
         end
       else
-        # logger.warn "Couldn't get #{url}"
         room.say "Couldn't get #{url}"
       end
     }
@@ -75,38 +76,23 @@ require 'scamp'
 
 # Add :verbose => true to get debug output, otherwise the logger will output INFO
 Scamp.new do |scamp|
-  scamp.adapter :campfire, Scamp::Campfire::Adapter, :api_key => "YOUR API KEY", 
-                                                     :subdomain => "yoursubdomain", 
-                                                     :rooms => [293788,"Monitoring"],
-                                                     :verbose => true
+  scamp.adapter :campfire, Scamp::Campfire::Adapter, api_key: "YOUR API KEY",
+                                                   subdomain: "yoursubdomain",
+                                                       rooms: [293788],
+                                                     verbose: true
 
   # 
   # Simple matching based on regex or string:
   # 
-  scamp.match /^repeat (\w+), (\w+)$/ do |msg|
-    say "You said #{matches[0]} and #{matches[1]}"
+  scamp.match /^repeat (\w+), (\w+)$/ do |room, msg|
+    room.say "You said #{matches[0]} and #{matches[1]}"
   end
 
   # 
   # Named captures become available in your match block
   # 
-  scamp.match /^say (?<yousaid>.+)$/ do |msg|
-    say "You said #{yousaid}"
-  end
-
-  # 
-  # A list of commands is available as command_list this matcher uses it
-  # to format a help text
-  # 
-  scamp.match "help" do |msg|
-    max_command_length = command_list.map{|cl| cl.first.to_s }.max_by(&:size).size
-    format_string = "%#{max_command_length + 1}s"
-    formatted_commands = command_list.map{|action, conds| "#{sprintf(format_string, action)} | #{conds.size == 0 ? '' : conds.inspect}"}
-    say <<-EOS
-#{sprintf("%-#{max_command_length + 1}s", "Command match")} | Conditions
---------------------------------------------------------------------------------
-#{formatted_commands.join("\n")}
-    EOS
+  scamp.match /^say (?<yousaid>.+)$/ do |room, msg|
+    room.say "You said #{msg.matches.yousaid}"
   end
 end
   
@@ -119,13 +105,24 @@ Scamp.new :first_match_only => true do |scamp|
 end
 ```
 
+## Adapters
+
+### Adapter channels
+
+### Writing an adapter
+
+
+## Plugins
+
+### Writing plugins
+
+* TODO
+
+
 ## TODO
 
   * Get messages working back to adapters
 	* Allow multiple values for conditions, eg: :conditions => {:user => ["Some User", "Some Other User"]}
-  * Examples for writing adapters
-  * Plugin system
-  * Examples for writing plugins
 
 ## How to contribute
 
