@@ -23,9 +23,9 @@ require 'scamp'
 require 'scamp-campfire-adapter'
 
 Scamp.new do |scamp|
-  scamp.adapter :campfire, Scamp::Campfire::Adapter, :api_key => "YOUR API KEY", 
-                                                     :subdomain => "yoursubdomain",
-                                                     :rooms => [293788]
+  scamp.adapter :campfire, Scamp::Campfire::Adapter, api_key: "YOUR API KEY",
+                                                   subdomain: "yoursubdomain",
+                                                       rooms: [293788]
 
   # Simple matching based on regex or string:
   scamp.match "ping" do |room, msg|
@@ -43,9 +43,9 @@ require 'em-http-request'
 require 'cgi'
 
 Scamp.new do |scamp|
-  scamp.adapter :campfire, Scamp::Campfire::Adapter, :api_key => "YOUR API KEY", 
-                                                     :subdomain => "yoursubdomain",
-                                                     :rooms => [293788]
+  scamp.adapter :campfire, Scamp::Campfire::Adapter, api_key: "YOUR API KEY",
+                                                   subdomain: "yoursubdomain",
+                                                       rooms: [293788]
 
   scamp.match /^artme (?<search>\w+)/ do |room, msg|
     url = "http://ajax.googleapis.com/ajax/services/search/images?rsz=large&start=0&v=1.0&q=#{CGI.escape(search)}"
