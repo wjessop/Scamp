@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/wjessop/Scamp.png?branch=master)](https://travis-ci.org/wjessop/Scamp)
+
 # Scamp
 
 A framework for writing [Campfire](http://campfirenow.com/) bots. Scamp is in early development so use it at your own risk, pull requests welcome.
