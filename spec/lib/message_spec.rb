@@ -2,12 +2,6 @@ require 'spec_helper'
 
 describe Scamp::Message do
   describe "#new" do
-    it "requires a body attribute" do
-      expect {
-        Scamp::Message.new('foo')
-      }.to raise_error(ArgumentError)
-    end
-
     it "should store and provide access to metadata" do
       msg = Scamp::Message.new("foo", body: "hello", foo: "foo", bar: "bar")
       msg.foo.should eql("foo")
