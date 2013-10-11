@@ -26,7 +26,7 @@ class Scamp
     private
     
     def triggered_by(message_text)
-      if message_text && required_prefix 
+      if message_text && required_prefix
         message_text = handle_prefix(message_text)
         return false unless message_text
       end
@@ -67,7 +67,7 @@ class Scamp
     
     def conditions_satisfied_by(msg)
       bot.logger.debug "Checking message against #{conditions.inspect}"
-      
+
       # item will be :user or :room
       # cond is the int or string value.
       conditions.each do |item, cond|
@@ -89,6 +89,13 @@ class Scamp
           when :room, :rooms
             return cond.select {|e| e.is_a? Integer }.include?(msg[{:room => :room_id}[item]]) ||
                    cond.select {|e| e.is_a? String }.include?(bot.room_name_for(msg[:room_id]))
+          end
+          bot.logger.error "Don't know how to deal with a match item of #{item}, cond #{cond}"
+        elsif cond.is_a? Symbol
+          case item
+          when :type
+            return (cond == :text && msg[:type] == "TextMessage") ||
+              (cond == :paste && msg[:type] == "PasteMessage")
           end
           bot.logger.error "Don't know how to deal with a match item of #{item}, cond #{cond}"
         end
