@@ -21,6 +21,10 @@ class Scamp
       match? trigger, body
     end
 
+    def to_s
+      body
+    end
+
     def matches
       Scamp::Matches.new(match) if match
     end

@@ -13,6 +13,7 @@ class Scamp
 
     def attempt(channel, context, msg)
       if listening?(channel) && msg.matches?(trigger) && msg.valid?(conditions)
+        bot.logger.debug "Message '#{msg}' matched on channel '#{channel}' with conditions #{conditions}, running action"
         run(context, msg)
         return true
       end
