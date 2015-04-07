@@ -6,10 +6,15 @@ require 'scamp/matcher'
 require 'scamp/adapter'
 require 'scamp/plugin'
 
+EM.error_handler do |e|
+  puts "Error raised inside the event loop: #{e.message}"
+  puts e.backtrace.join("\n")
+end
+
 class Scamp
   attr_accessor :adapters, :plugins, :matchers, :logger, :verbose, :first_match_only, :required_format, :strip_prefix
 
-  def initialize(options = {}, &block)
+  def initialize(options = {})
     options ||= {}
     options.each do |k,v|
       s = "#{k}="
