@@ -47,6 +47,10 @@ class Scamp
 
   def connect!
     EM.run do
+      EventMachine.error_handler do |e|
+        $stderr.puts "Exception during event: #{e.message} (#{e.class})"
+        $stderr.puts (e.backtrace || [])[0..10].join("\n")
+      end
       @adapters.each do |name, data|
         logger.info "Connecting to #{name} adapter"
         data[:adapter].connect!
