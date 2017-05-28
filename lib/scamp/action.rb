@@ -48,7 +48,7 @@ class Scamp
     end
     
     def run
-      self.instance_eval &@action
+      EM.defer { self.instance_eval &@action }
     end
     
     def command_list
